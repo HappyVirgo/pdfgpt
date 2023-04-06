@@ -20,7 +20,6 @@ const Sidebar = () => {
   const { file, isDarkTheme, toggleThemeHandler, setShowPdf, setShowSetting, recent, setRecent, setFile } =
     useContext(MainContext);
   const { user, setUser, setTokens } = useContext(AuthContext);
-  console.log("user: ", user);
   const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);

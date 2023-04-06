@@ -1,4 +1,7 @@
 import React, { Fragment, useContext, useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+
 import Modal from "../../basic/Modal";
 import Drawer from "../../basic/Drawer";
 import { MainContext } from "../../../layout/MainContextProvider";
@@ -10,11 +13,14 @@ import DarkSVG from "../../../assets/svg/dark.svg";
 import LightSVG from "../../../assets/svg/light.svg";
 import TrashSVG from "../../../assets/svg/trash.svg";
 import Accordion from "../../basic/Accordion";
-import { useGoogleLogin } from "@react-oauth/google";
+import { AuthContext } from "../../../layout/AuthContextProvider";
+import Image from "next/image";
 
 const Sidebar = () => {
   const { file, isDarkTheme, toggleThemeHandler, setShowPdf, setShowSetting, recent, setRecent, setFile } =
     useContext(MainContext);
+  const { user, setUser, setTokens } = useContext(AuthContext);
+  console.log("user: ", user);
   const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -24,7 +30,12 @@ const Sidebar = () => {
   };
 
   const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
+    onSuccess: async (tokenResponse) => {
+      const { data } = await axios.post("api/auth", { tokens: tokenResponse });
+      console.log("data: ", data);
+      setUser(data?.data?.data);
+      setTokens(data?.data?.tokens);
+    },
   });
 
   return (
@@ -106,9 +117,19 @@ const Sidebar = () => {
                 </a>
               </div>
             ))}
-            <div className="ml-8 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
-              <button onClick={() => login()}>Login</button>
-            </div>
+            {user ? (
+              <div className="flex items-center pt-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
+                <Image alt="avatar" src={user.picture} width={25} height={25} className="rounded-full"></Image>
+                <div className="ml-2">
+                  <p>{user.name}</p>
+                  <p className="text-xs">{user.email}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="ml-8 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
+                <button onClick={() => login()}>Login</button>
+              </div>
+            )}
           </div>
         </div>
         <div className="justify-center hidden w-full xl:hidden md:flex">

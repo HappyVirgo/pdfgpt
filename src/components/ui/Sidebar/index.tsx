@@ -1,6 +1,4 @@
 import React, { Fragment, useContext, useState } from "react";
-import getConfig from "next/config";
-import axios from "axios";
 import Modal from "../../basic/Modal";
 import Drawer from "../../basic/Drawer";
 import { MainContext } from "../../../layout/MainContextProvider";
@@ -12,58 +10,28 @@ import DarkSVG from "../../../assets/svg/dark.svg";
 import LightSVG from "../../../assets/svg/light.svg";
 import TrashSVG from "../../../assets/svg/trash.svg";
 import Accordion from "../../basic/Accordion";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Sidebar = () => {
-  const { publicRuntimeConfig } = getConfig();
   const { file, isDarkTheme, toggleThemeHandler, setShowPdf, setShowSetting, recent, setRecent, setFile } =
     useContext(MainContext);
   const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
-  const [userData, setUserData] = useState(null);
 
   const toggleThemeHander = () => {
     toggleThemeHandler();
   };
 
-  // const loginWithGoogle = async () => {
-  //   try {
-  //     const getProfileInfo = await axios(`${publicRuntimeConfig.BACKEND_API_BASEURL}/auth/google`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     console.log("getProfileInfo", getProfileInfo);
-  //   } catch (error) {
-  //     console.log("error: ", error);
-  //   }
-  // };
-  const authorizeUser = async () => {
-    try {
-      // Request authorization from server
-      const response = await axios.get(`${publicRuntimeConfig.BACKEND_API_BASEURL}/oauth2/authorize`);
-      console.log("response: ", response.data);
-      // Open login page in new window
-      // const childWindow = window.open(response.data, "_blank");
-
-      // Listen for messages from child window
-      // window.addEventListener("message", (event) => {
-      //   if (event.origin === window.location.origin) {
-      //     setUserData(event.data);
-      //     childWindow?.close();
-      //   }
-      // });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => console.log(tokenResponse),
+  });
 
   return (
     <Fragment>
       <div className="hidden py-10 shadow-lg xl:py-20 md:w-24 xl:w-380 bg-primary md:flex">
         <div className="flex-col justify-between hidden mx-auto overflow-auto text-white xl:flex">
-          <div className="space-y-2 text-md font-base text-white">
+          <div className="space-y-2 text-white text-md font-base">
             <button onClick={() => window.location.reload()} className="flex items-center gap-3 hover:text-white">
               <NewSVG />
               New PDF
@@ -83,7 +51,7 @@ const Sidebar = () => {
               Change API Key
             </button>
             <Accordion title="Recent">
-              <div className="text-sm ml-6 w-32">
+              <div className="w-32 ml-6 text-sm">
                 {recent.length > 0 &&
                   recent.map((item, index) => (
                     <div
@@ -94,7 +62,7 @@ const Sidebar = () => {
                         setFile({ uid: Object.keys(item)[0], name: Object.values(item)[0] });
                       }}
                     >
-                      <span className="whitespace-nowrap truncate flex-1">{Object.values(item)[0]}</span>
+                      <span className="flex-1 truncate whitespace-nowrap">{Object.values(item)[0]}</span>
                       <button
                         className="flex-none"
                         onClick={(e) => {
@@ -138,15 +106,8 @@ const Sidebar = () => {
                 </a>
               </div>
             ))}
-            <div>
-              {!userData && <button onClick={authorizeUser}>Login with Google</button>}
-              {userData && (
-                <div>
-                  <h2>Welcome {userData?.name}!</h2>
-                  <p>Your email is {userData?.email}</p>
-                  <img src={userData?.profilePicture} alt="Profile picture" />
-                </div>
-              )}
+            <div className="ml-8 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
+              <button onClick={() => login()}>Login</button>
             </div>
           </div>
         </div>
@@ -166,13 +127,13 @@ const Sidebar = () => {
         <div className="mt-5 space-y-2">
           <p>
             Contact Us for queries/question:
-            <a href="mailto:pdfgpt@gmail.com?subject=PDFGPTqueries" className="border-b ml-2">
+            <a href="mailto:pdfgpt@gmail.com?subject=PDFGPTqueries" className="ml-2 border-b">
               Click here
             </a>
           </p>
           <p>
             Contact Us for Business Purpose:
-            <a href="mailto:pdfgpt@gmail.com?subject=PDFGPTBusiness" className="border-b ml-2">
+            <a href="mailto:pdfgpt@gmail.com?subject=PDFGPTBusiness" className="ml-2 border-b">
               Click here
             </a>
           </p>
@@ -182,14 +143,14 @@ const Sidebar = () => {
               onClick={() => {
                 window.open("https://discord.gg/wQpAvefeqW", "_blank");
               }}
-              className="border-b ml-2"
+              className="ml-2 border-b"
             >
               Join Discord
             </a>
           </p>
           <p>
             Or Write us at:
-            <a href="mailto:pdfgpt@gmail.com?subject=PDFGPTOthers" className="border-b ml-2">
+            <a href="mailto:pdfgpt@gmail.com?subject=PDFGPTOthers" className="ml-2 border-b">
               pdfgpt@gmail.com
             </a>
           </p>
@@ -199,7 +160,7 @@ const Sidebar = () => {
       </Modal>
       <Drawer isOpen={showDrawer} setIsOpen={setShowDrawer}>
         <div className="flex flex-col justify-between w-full h-full mx-auto overflow-auto text-white">
-          <div className="space-y-2 text-md font-base text-white">
+          <div className="space-y-2 text-white text-md font-base">
             <button
               onClick={() => {
                 window.location.reload();
@@ -232,7 +193,7 @@ const Sidebar = () => {
               Change API Key
             </button>
             <Accordion title="Recent">
-              <div className="text-sm ml-6 w-32">
+              <div className="w-32 ml-6 text-sm">
                 {recent.length > 0 &&
                   recent.map((item, index) => (
                     <div
@@ -244,7 +205,7 @@ const Sidebar = () => {
                         setShowDrawer(false);
                       }}
                     >
-                      <span className="whitespace-nowrap truncate flex-1">{Object.values(item)[0]}</span>
+                      <span className="flex-1 truncate whitespace-nowrap">{Object.values(item)[0]}</span>
                       <button
                         className="flex-none"
                         onClick={(e) => {

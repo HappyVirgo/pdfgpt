@@ -2,18 +2,18 @@ import React, { createContext, useState } from "react";
 
 type UserType = {
   email: string;
-  family_name: string;
-  given_name: string;
+  family_name?: string;
+  given_name?: string;
   id: string;
-  locale: string;
+  locale?: string;
   name: string;
   picture: string;
-  verified_email: boolean;
+  verified_email?: boolean;
 };
 
 type TokenType = {
-  access_token: string;
-  expires_in: number;
+  refresh_token: string;
+  expires_in?: number;
 };
 
 type AuthContextType = {
@@ -24,9 +24,9 @@ type AuthContextType = {
 };
 
 const AuthContextValue: AuthContextType = {
-  user: undefined,
+  user: null,
   setUser: () => {},
-  tokens: undefined,
+  tokens: null,
   setTokens: () => {},
 };
 

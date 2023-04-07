@@ -2,9 +2,6 @@
 
 # dependencies
 /node_modules
-/pages/api/embedding.ts
-/pages/api
-/src/utils
 
 /.pnp
 .pnp.js

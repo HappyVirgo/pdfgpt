@@ -78,7 +78,7 @@ const ChatLayout: React.FC = () => {
       let resp = await fetch("https://jsonip.com", { mode: "cors" });
       const { ip } = await resp.json();
       if (typeof window !== "undefined") localStorage.setItem("ip", ip.split(",")[0]);
-      const res = await axios("/api/split-chunks", {
+      const res = await axios("/api/chat/split-chunks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +92,7 @@ const ChatLayout: React.FC = () => {
       for (let i = 0; i < chunkList.length; i += chunkSize) {
         const chunk = chunkList.slice(i, i + chunkSize);
 
-        await axios("/api/embedding", {
+        await axios("/api/chat/embedding", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -171,7 +171,7 @@ const ChatLayout: React.FC = () => {
     }
     try {
       setLoading(true);
-      const embedRes = await axios("/api/search-embed", {
+      const embedRes = await axios("/api/chat/search-embed", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -190,7 +190,7 @@ const ChatLayout: React.FC = () => {
       const promptData = embedRes.data?.map((d: any) => d.content).join("\n\n");
       const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
 
-      const answerResponse = await fetch("/api/search-answer", {
+      const answerResponse = await fetch("/api/chat/search-answer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

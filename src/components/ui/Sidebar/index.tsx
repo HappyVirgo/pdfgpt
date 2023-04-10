@@ -116,7 +116,7 @@ const Sidebar = () => {
               </div>
             </Accordion>
             <Accordion title="Google Drive">
-              <div className="w-32 ml-6 space-y-1 text-sm">
+              <button className="w-32 ml-6 space-y-1 text-sm" onClick={() => {}}>
                 {driveFiles.map((item) => (
                   <button className="flex items-center justify-start w-full gap-1" key={item.id}>
                     <div className="flex-none">
@@ -125,7 +125,7 @@ const Sidebar = () => {
                     <div className="flex-1 text-left truncate whitespace-nowrap">{item.name}</div>
                   </button>
                 ))}
-              </div>
+              </button>
             </Accordion>
           </div>
           <div className="mt-10 text-md font-base">

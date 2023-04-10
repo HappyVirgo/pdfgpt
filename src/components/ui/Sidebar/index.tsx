@@ -32,9 +32,18 @@ const Sidebar = () => {
     onSuccess: async (tokenResponse) => {
       const { data } = await axios.post("api/auth", { tokens: tokenResponse });
       setUser(data?.data?.data);
-      setTokens(data?.data?.tokens);
+      setTokens({ refresh_token: data?.data?.refreshToken });
+      localStorage.setItem("email", data?.data?.data?.email ?? "");
+      localStorage.setItem("token", data?.data?.refreshToken ?? "");
     },
   });
+
+  const logout = () => {
+    setUser(null);
+    setTokens(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+  };
 
   return (
     <Fragment>
@@ -116,11 +125,21 @@ const Sidebar = () => {
               </div>
             ))}
             {user ? (
-              <div className="flex items-center pt-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
-                <Image alt="avatar" src={user.picture} width={25} height={25} className="rounded-full"></Image>
-                <div className="ml-2">
-                  <p>{user.name}</p>
-                  <p className="text-xs">{user.email}</p>
+              <div>
+                <div className="flex items-center pt-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
+                  <Image alt="avatar" src={user.picture} width={25} height={25} className="rounded-full"></Image>
+                  <div className="ml-2">
+                    <p>{user.name}</p>
+                    <p className="text-xs">{user.email}</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    className="flex items-center gap-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText"
+                    onClick={() => logout()}
+                  >
+                    Logout
+                  </button>
                 </div>
               </div>
             ) : (

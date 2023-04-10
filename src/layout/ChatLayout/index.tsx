@@ -9,7 +9,6 @@ import MyDropzone from "../../components/basic/Dropzone";
 import Modal from "../../components/basic/Modal";
 import Message from "../../components/ui/Message";
 import { MainContext } from "../MainContextProvider";
-import { eventEmitter } from "../../utils/helper";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 

@@ -1,6 +1,5 @@
 import React, { Fragment, useContext } from "react";
 import { MainContext } from "../../../layout/MainContextProvider";
-import { eventEmitter } from "../../../utils/helper";
 import { Popover, Transition } from "@headlessui/react";
 import { BeatLoader } from "react-spinners";
 

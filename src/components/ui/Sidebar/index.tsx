@@ -12,6 +12,7 @@ import ListSVG from "../../../assets/svg/list.svg";
 import DarkSVG from "../../../assets/svg/dark.svg";
 import LightSVG from "../../../assets/svg/light.svg";
 import TrashSVG from "../../../assets/svg/trash.svg";
+import GoogleIcon from "../../../assets/svg/google.svg";
 import Accordion from "../../basic/Accordion";
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import Image from "next/image";
@@ -49,8 +50,8 @@ const Sidebar = () => {
   return (
     <Fragment>
       <div className="hidden py-10 shadow-lg xl:py-20 md:w-24 xl:w-380 bg-primary md:flex">
-        <div className="flex-col justify-between hidden mx-auto overflow-auto text-white xl:flex">
-          <div className="space-y-2 text-white text-md font-base">
+        <div className="flex-col justify-between hidden w-full px-5 overflow-auto text-white xl:flex">
+          <div className="mx-auto space-y-2 text-white text-md font-base">
             <button onClick={() => window.location.reload()} className="flex items-center gap-3 hover:text-white">
               <NewSVG />
               New PDF
@@ -102,52 +103,68 @@ const Sidebar = () => {
               </div>
             </Accordion>
           </div>
-          <div className="mt-10 space-y-2 text-md font-base">
+          <div className="mt-10 text-md font-base">
             <button
               onClick={toggleThemeHander}
-              className="flex items-center gap-3 transition-all duration-300 hover:text-white text-darkText"
+              className="flex items-center gap-3 mx-auto transition-all duration-300 hover:text-white text-darkText"
             >
               {!isDarkTheme ? <DarkSVG /> : <LightSVG />}
               {isDarkTheme ? "Light mode" : "Dark mode"}
             </button>
-            {[
-              { link: "https://discord.gg/wQpAvefeqW", label: " Join Discord" },
-              { link: "https://twitter.com/pdfgpt", label: "Twitter" },
-              { link: "https://discord.gg/wQpAvefeqW", label: "Report Bug" },
-              { link: "#", label: "Contact Us", onClick: () => setShowContactModal(true) },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="ml-8 transition-all duration-300 cursor-pointer hover:text-white text-darkText"
-              >
-                <a href={item.link} onClick={item?.onClick}>
-                  {item.label}
-                </a>
-              </div>
-            ))}
-            {user ? (
-              <div>
-                <div className="flex items-center pt-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
-                  <Image alt="avatar" src={user.picture} width={25} height={25} className="rounded-full"></Image>
+            <button
+              onClick={() => {
+                if (!user) {
+                  login();
+                }
+              }}
+              className={`relative w-full py-3 mt-10 text-center transition-all duration-300 rounded-full cursor-pointer  text-white ${
+                user ? "bg-bgRadialEnd" : "bg-transparent border"
+              }`}
+            >
+              {user ? (
+                <>
+                  <div className="absolute -translate-y-1/2 top-1/2 left-1">
+                    <Image alt="avatar" src={user.picture} width={40} height={40} className="rounded-full"></Image>
+                  </div>
                   <div className="ml-2">
                     <p>{user.name}</p>
-                    <p className="text-xs">{user.email}</p>
                   </div>
-                </div>
-                <div className="flex justify-end mt-4">
                   <button
-                    className="flex items-center gap-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText"
-                    onClick={() => logout()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      logout();
+                    }}
+                    className="absolute top-2 right-4"
                   >
-                    Logout
+                    ...
                   </button>
+                </>
+              ) : (
+                <>
+                  Login
+                  <div className="absolute -translate-y-1/2 right-2 top-1/2">
+                    <GoogleIcon />
+                  </div>
+                </>
+              )}
+            </button>
+            <div className="flex justify-between w-full mt-3 itmes-center">
+              {[
+                { link: "https://discord.gg/wQpAvefeqW", label: "Discord" },
+                { link: "https://twitter.com/pdfgpt", label: "Twitter" },
+                { link: "https://discord.gg/wQpAvefeqW", label: "Report Bug" },
+                { link: "#", label: "Contact Us", onClick: () => setShowContactModal(true) },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="text-xs transition-all duration-300 cursor-pointer hover:text-white text-darkText"
+                >
+                  <a href={item.link} onClick={item?.onClick}>
+                    {item.label}
+                  </a>
                 </div>
-              </div>
-            ) : (
-              <div className="ml-8 transition-all duration-300 cursor-pointer hover:text-white text-darkText">
-                <button onClick={() => login()}>Login</button>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
         </div>
         <div className="justify-center hidden w-full xl:hidden md:flex">

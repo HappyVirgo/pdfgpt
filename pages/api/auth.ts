@@ -23,9 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const { tokens } = req.body;
   try {
     const { data } = await axios.post(`${process.env.BACKEND_API_BASEURL}/auth/login`, { tokens });
-    console.log("data: ", data);
     res.status(200).json({ ...data });
   } catch (error: any) {
-    return res.status(error?.response?.status).json(error.response.data);
+    return res.status(500).json(error?.response?.data);
   }
 }

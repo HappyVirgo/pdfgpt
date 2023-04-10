@@ -19,9 +19,8 @@ type ResponseDateType = {
   };
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<{ data: ResponseDateType }>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseDateType>) {
   const { tokens } = req.body;
   const { data } = await axios.post(`${process.env.BACKEND_API_BASEURL}/auth/login`, { tokens });
-  console.log("data: ", data);
-  res.status(200).json({ data });
+  res.status(200).json({ ...data });
 }

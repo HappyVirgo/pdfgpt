@@ -31,18 +31,18 @@ const Sidebar = () => {
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const { data } = await axios.post("api/auth", { tokens: tokenResponse });
-      setUser(data?.data?.data);
-      setTokens({ refresh_token: data?.data?.refreshToken });
-      localStorage.setItem("email", data?.data?.data?.email ?? "");
-      localStorage.setItem("token", data?.data?.refreshToken ?? "");
+      setUser(data?.user);
+      setTokens(data?.tokens);
+      localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
+      localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
     },
   });
 
   const logout = () => {
     setUser(null);
     setTokens(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
   };
 
   return (
@@ -133,7 +133,7 @@ const Sidebar = () => {
                     <p className="text-xs">{user.email}</p>
                   </div>
                 </div>
-                <div className="mt-4 flex justify-end">
+                <div className="flex justify-end mt-4">
                   <button
                     className="flex items-center gap-3 transition-all duration-300 cursor-pointer hover:text-white text-darkText"
                     onClick={() => logout()}

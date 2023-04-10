@@ -12,7 +12,8 @@ type UserType = {
 };
 
 type TokenType = {
-  refresh_token: string;
+  refreshToken: string;
+  accessToken: string;
   expires_in?: number;
 };
 

@@ -66,13 +66,14 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
 
   async function autoLogin() {
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
       if (token) {
         const { data } = await axios.post("api/auto_login", { token });
-        setUser(data?.dataValues);
-        setTokens({ refresh_token: data?.refreshToken });
-        localStorage.setItem("email", data?.dataValues?.email ?? "");
-        localStorage.setItem("token", data?.refreshToken ?? "");
+        console.log("data: ", data);
+        setUser(data?.user);
+        setTokens(data?.tokens);
+        localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
+        localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
       }
     } catch (error: any) {
       console.error(error.response);

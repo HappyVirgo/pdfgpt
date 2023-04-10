@@ -2,21 +2,20 @@ import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type ResponseDateType = {
-  data: {
-    tokens: {
-      refresh_token: string;
-      expires_in: number;
-    };
-    data: {
-      id: string;
-      email: string;
-      verified_email: boolean;
-      name: string;
-      given_name: string;
-      family_name: string;
-      picture: string;
-      locale: string;
-    };
+  tokens: {
+    refresh_token: string;
+    access_token: string;
+    expires_in: number;
+  };
+  user: {
+    id: string;
+    email: string;
+    verified_email: boolean;
+    name: string;
+    given_name: string;
+    family_name: string;
+    picture: string;
+    locale: string;
   };
 };
 

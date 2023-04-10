@@ -3,6 +3,13 @@ import axios from "axios";
 import React, { createContext, SetStateAction, useEffect, useState, useContext } from "react";
 import { AuthContext } from "../AuthContextProvider";
 
+type DriveFileType = {
+  id: string;
+  kind: string;
+  mimeType: string;
+  name: string;
+};
+
 type MainContextType = {
   isDarkTheme: Boolean;
   toggleThemeHandler: VoidFunction;
@@ -16,6 +23,8 @@ type MainContextType = {
   setRecent: React.Dispatch<SetStateAction<{ [key: string]: string }[]>>;
   pageNum: number;
   setPageNum: React.Dispatch<SetStateAction<number>>;
+  driveFiles: DriveFileType[];
+  setDriveFiles: React.Dispatch<SetStateAction<DriveFileType[]>>;
 };
 
 const MainContextValue: MainContextType = {
@@ -31,6 +40,8 @@ const MainContextValue: MainContextType = {
   setRecent: () => {},
   pageNum: 1,
   setPageNum: () => {},
+  driveFiles: [],
+  setDriveFiles: () => {},
 };
 
 export const MainContext = createContext(MainContextValue);
@@ -46,6 +57,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
   const [showSetting, setShowSetting] = useState(false);
   const [recent, setRecent] = useState<{ [key: string]: string }[]>([]);
   const [pageNum, setPageNum] = useState<number>(1);
+  const [driveFiles, setDriveFiles] = useState<DriveFileType[]>([]);
   const { setUser, setTokens } = useContext(AuthContext);
 
   function isLocalStorageEmpty(): boolean {
@@ -67,15 +79,19 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
   async function autoLogin() {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
-      if (token) {
-        const { data } = await axios.post("api/auto_login", { token });
+      const google_token = typeof window !== "undefined" ? localStorage.getItem("googleAuthToken") : null;
+      if (token && google_token) {
+        const { data } = await axios.post("api/auto_login", { token, google_token });
         setUser(data?.user);
         setTokens(data?.tokens);
+        setDriveFiles(data?.files);
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
       }
     } catch (error: any) {
-      console.error(error.response);
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("googleAuthToken");
     }
   }
 
@@ -108,12 +124,14 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         showSetting,
         recent,
         pageNum,
+        driveFiles,
         setShowPdf,
         toggleThemeHandler,
         setFile,
         setShowSetting,
         setRecent,
         setPageNum,
+        setDriveFiles,
       }}
     >
       {children}

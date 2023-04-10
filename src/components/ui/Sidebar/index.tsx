@@ -13,13 +13,24 @@ import DarkSVG from "../../../assets/svg/dark.svg";
 import LightSVG from "../../../assets/svg/light.svg";
 import TrashSVG from "../../../assets/svg/trash.svg";
 import GoogleIcon from "../../../assets/svg/google.svg";
+import PDFSVG from "../../../assets/svg/pdf.svg";
 import Accordion from "../../basic/Accordion";
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import Image from "next/image";
 
 const Sidebar = () => {
-  const { file, isDarkTheme, toggleThemeHandler, setShowPdf, setShowSetting, recent, setRecent, setFile } =
-    useContext(MainContext);
+  const {
+    file,
+    isDarkTheme,
+    toggleThemeHandler,
+    setShowPdf,
+    setShowSetting,
+    recent,
+    setRecent,
+    setFile,
+    driveFiles,
+    setDriveFiles,
+  } = useContext(MainContext);
   const { user, setUser, setTokens } = useContext(AuthContext);
   const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -33,8 +44,10 @@ const Sidebar = () => {
     onSuccess: async (tokenResponse) => {
       localStorage.setItem("googleAuthToken", tokenResponse?.access_token ?? "");
       const { data } = await axios.post("api/auth", { tokens: tokenResponse });
+      console.log("data: ", data);
       setUser(data?.user);
       setTokens(data?.tokens);
+      setDriveFiles(data?.files ?? []);
       localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
       localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
     },
@@ -102,6 +115,18 @@ const Sidebar = () => {
                   ))}
               </div>
             </Accordion>
+            <Accordion title="Google Drive">
+              <div className="w-32 ml-6 space-y-1 text-sm">
+                {driveFiles.map((item) => (
+                  <button className="flex items-center justify-start w-full gap-1" key={item.id}>
+                    <div className="flex-none">
+                      <PDFSVG />
+                    </div>
+                    <div className="flex-1 text-left truncate whitespace-nowrap">{item.name}</div>
+                  </button>
+                ))}
+              </div>
+            </Accordion>
           </div>
           <div className="mt-10 text-md font-base">
             <button
@@ -129,7 +154,7 @@ const Sidebar = () => {
                   <div className="ml-2">
                     <p>{user.name}</p>
                   </div>
-                  <button
+                  <a
                     onClick={(e) => {
                       e.stopPropagation();
                       logout();
@@ -137,7 +162,7 @@ const Sidebar = () => {
                     className="absolute top-2 right-4"
                   >
                     ...
-                  </button>
+                  </a>
                 </>
               ) : (
                 <>

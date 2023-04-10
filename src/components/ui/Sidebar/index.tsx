@@ -30,6 +30,7 @@ const Sidebar = () => {
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      localStorage.setItem("googleAuthToken", tokenResponse?.access_token ?? "");
       const { data } = await axios.post("api/auth", { tokens: tokenResponse });
       setUser(data?.user);
       setTokens(data?.tokens);

@@ -69,7 +69,6 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
       const token = typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
       if (token) {
         const { data } = await axios.post("api/auto_login", { token });
-        console.log("data: ", data);
         setUser(data?.user);
         setTokens(data?.tokens);
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");

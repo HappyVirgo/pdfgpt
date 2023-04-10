@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type RespinseDateType = {
+type ResponseDateType = {
   tokens: {
     accessToken: string;
     refreshToken: string;
@@ -19,8 +19,9 @@ type RespinseDateType = {
   };
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<RespinseDateType>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<{ data: ResponseDateType }>) {
   const { tokens } = req.body;
   const { data } = await axios.post(`${process.env.BACKEND_API_BASEURL}/auth/login`, { tokens });
-  res.status(200).json({ ...data });
+  console.log("data: ", data);
+  res.status(200).json({ data });
 }

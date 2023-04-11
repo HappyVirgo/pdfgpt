@@ -20,6 +20,7 @@ module.exports = {
         semiLightText: "#719CAB",
         bgRadialStart: "#234E9A",
         bgRadialEnd: "#19376D",
+        purple: "#6842FF",
       },
       spacing: {
         380: "380px",

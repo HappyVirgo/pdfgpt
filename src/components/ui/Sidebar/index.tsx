@@ -18,6 +18,7 @@ import PDFSVG from "../../../assets/svg/pdf.svg";
 import Accordion from "../../basic/Accordion";
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import Image from "next/image";
+import Link from "next/link";
 
 const Sidebar = () => {
   const {
@@ -150,7 +151,9 @@ const Sidebar = () => {
                     <Menu.Button className="w-full px-2 py-2 text-right text-md">...</Menu.Button>
                     <Menu.Items className="absolute right-0 text-sm text-right transform -translate-y-full rounded-lg shadow-lg bg-bgRadialStart w-fit top-4">
                       <Menu.Item>
-                        <div className="px-2 py-1">Profile</div>
+                        <Link href="/profile">
+                          <div className="px-2 py-1">Profile</div>
+                        </Link>
                       </Menu.Item>
                       <Menu.Item>
                         <button onClick={logout} className="px-2 py-1">

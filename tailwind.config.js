@@ -21,6 +21,7 @@ module.exports = {
         bgRadialStart: "#234E9A",
         bgRadialEnd: "#19376D",
         purple: "#6842FF",
+        darkPurple: "#1D2D7D",
       },
       spacing: {
         380: "380px",

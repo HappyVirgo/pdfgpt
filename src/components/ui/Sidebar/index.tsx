@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
+import { Menu } from "@headlessui/react";
 import axios from "axios";
 
 import Modal from "../../basic/Modal";
@@ -136,43 +137,41 @@ const Sidebar = () => {
               {!isDarkTheme ? <DarkSVG /> : <LightSVG />}
               {isDarkTheme ? "Light mode" : "Dark mode"}
             </button>
-            <button
-              onClick={() => {
-                if (!user) {
-                  login();
-                }
-              }}
-              className={`relative w-full py-3 mt-10 text-center transition-all duration-300 rounded-full cursor-pointer  text-white ${
-                user ? "bg-bgRadialEnd" : "bg-transparent border"
-              }`}
-            >
-              {user ? (
-                <>
-                  <div className="absolute -translate-y-1/2 top-1/2 left-1">
-                    <Image alt="avatar" src={user.picture} width={40} height={40} className="rounded-full"></Image>
-                  </div>
-                  <div className="ml-2">
-                    <p>{user.name}</p>
-                  </div>
-                  <a
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      logout();
-                    }}
-                    className="absolute top-2 right-4"
-                  >
-                    ...
-                  </a>
-                </>
-              ) : (
-                <>
-                  Login
-                  <div className="absolute -translate-y-1/2 right-2 top-1/2">
-                    <GoogleIcon />
-                  </div>
-                </>
-              )}
-            </button>
+            {user ? (
+              <div className="relative w-full py-3 mt-10 text-center text-white transition-all duration-300 rounded-full cursor-pointer bg-bgRadialEnd">
+                <div className="absolute -translate-y-1/2 top-1/2 left-1">
+                  <Image alt="avatar" src={user.picture} width={40} height={40} className="rounded-full"></Image>
+                </div>
+                <div className="ml-2">
+                  <p>{user.name}</p>
+                </div>
+                <div className="absolute top-0 right-4">
+                  <Menu>
+                    <Menu.Button className="w-full px-2 py-2 text-right text-md">...</Menu.Button>
+                    <Menu.Items className="absolute right-0 text-sm text-right transform -translate-y-full rounded-lg shadow-lg bg-bgRadialStart w-fit top-4">
+                      <Menu.Item>
+                        <div className="px-2 py-1">Profile</div>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <button onClick={logout} className="px-2 py-1">
+                          Logout
+                        </button>
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Menu>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => login()}
+                className="relative w-full py-3 mt-10 text-center text-white transition-all duration-300 bg-transparent border rounded-full cursor-pointer"
+              >
+                Login
+                <div className="absolute -translate-y-1/2 right-2 top-1/2">
+                  <GoogleIcon />
+                </div>
+              </button>
+            )}
             <div className="flex justify-between w-full mt-3 itmes-center">
               {[
                 { link: "https://discord.gg/wQpAvefeqW", label: "Discord" },

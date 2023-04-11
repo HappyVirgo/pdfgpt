@@ -94,16 +94,16 @@ const UserLayout: React.FC = () => {
 
   return (
     <div className="w-full h-full md:flex">
-      <div className="w-full h-full flex justify-center dark:bg-bgRadialEnd  bg-lightText dark:bg-gradient-radial duration-300 transition-all py-10 shadow-lg xl:py-20">
+      <div className="flex justify-center w-full h-full py-10 transition-all duration-300 shadow-lg dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
         <div className="w-full max-w-[1180px] left-1/2 lg:mx-20 md:mx-15 sm:mx-10 mx-10 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8 mt-8">
           <Navbar />
           <div className="grid grid-cols-12 gap-4 mt-16">
-            <div className="lg:col-span-8 md:col-span-6 sm:col-span-12 col-span-12">
-              <div className="flex items-center sm:col-span-12 col-span-12">
-                <p className="text-white text-2xl mr-8">Personal Information</p>
-                <Button editType="edit" text="Edit" additionalClass="border" onClick={() => setProfileEditable(true)} />
+            <div className="col-span-12 lg:col-span-8 md:col-span-6 sm:col-span-12">
+              <div className="flex items-center col-span-12 sm:col-span-12">
+                <p className="mr-8 text-2xl">Personal Information</p>
+                <Button icon={true} text="Edit" additionalClass="border" onClick={() => setProfileEditable(true)} />
               </div>
-              <div className="grid grid-cols-12 gap-4 mt-9 sm:col-span-12 col-span-12">
+              <div className="grid grid-cols-12 col-span-12 gap-4 mt-9 sm:col-span-12">
                 <div className="col-span-5">
                   <div className="flex flex-col">
                     <p>First name</p>
@@ -133,10 +133,9 @@ const UserLayout: React.FC = () => {
                 </div>
               </div>
               {profileEditable && (
-                <div className="flex pt-8 justify-end gap-3 sm:col-span-12 col-span-12">
-                  <Button editType="save" text="Save" additionalClass="border" onClick={() => savePersonalInfo()} />
+                <div className="flex justify-end col-span-12 gap-3 pt-8 sm:col-span-12">
+                  <Button text="Save" additionalClass="border" onClick={() => savePersonalInfo()} />
                   <Button
-                    editType="cancel"
                     text="Cancel"
                     additionalClass="border"
                     onClick={() => {
@@ -149,10 +148,10 @@ const UserLayout: React.FC = () => {
               )}
               <div className="sm:col-span-12">
                 <div className="flex items-center mt-10">
-                  <p className="text-white text-2xl mr-8">Your card</p>
+                  <p className="mr-8 text-2xl">Your card</p>
                   <Button
                     text="Edit"
-                    editType="edit"
+                    icon
                     additionalClass="border"
                     onClick={() => {
                       setCardEditable(true);
@@ -173,7 +172,7 @@ const UserLayout: React.FC = () => {
                           }}
                         />
                       </div>
-                      <div className="flex mt-4 gap-4">
+                      <div className="flex gap-4 mt-4">
                         <div className="w-full">
                           <p>Expire Date</p>
                           <Input
@@ -197,10 +196,9 @@ const UserLayout: React.FC = () => {
                           />
                         </div>
                       </div>
-                      <div className="flex mt-8 mb-4 justify-end gap-4">
-                        <Button editType="save" text="Save" additionalClass="border" onClick={() => saveCardInfo()} />
+                      <div className="flex justify-end gap-4 mt-8 mb-4">
+                        <Button text="Save" additionalClass="border" onClick={() => saveCardInfo()} />
                         <Button
-                          editType="cancel"
                           text="Cancel"
                           additionalClass="border"
                           onClick={() => {
@@ -210,10 +208,10 @@ const UserLayout: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-purple bg-gradient-to-b from-indigo-500 rounded-md p-6 text-white text-base">
+                    <div className="p-6 text-base text-white rounded-md bg-purple bg-gradient-to-b from-indigo-500">
                       <p>YOUR NAME</p>
                       <div className="mt-10">{formattedCardNumber(cardNumber ?? "")}</div>
-                      <div className="mt-3 flex justify-between">
+                      <div className="flex justify-between mt-3">
                         <p>{cardExpiry}</p>
                         <MasterCardIcon />
                       </div>
@@ -222,7 +220,7 @@ const UserLayout: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-4 md:col-span-6 sm:col-span-12 col-span-12 mb-8">
+            <div className="col-span-12 mb-8 lg:col-span-4 md:col-span-6 sm:col-span-12">
               <PlanCard />
             </div>
           </div>

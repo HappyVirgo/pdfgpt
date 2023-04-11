@@ -3,21 +3,21 @@ import EditSvg from "../../../assets/svg/right_arraw.svg";
 
 type ButtonProps = {
   text?: string;
-  editType?: "save" | "edit" | "cancel";
+  icon?: boolean;
   additionalClass?: string;
   onClick?: VoidFunction;
 };
 
-const Button: React.FC<ButtonProps> = ({ text, editType, additionalClass, onClick }) => {
+const Button: React.FC<ButtonProps> = ({ text, icon, additionalClass, onClick }) => {
   return (
     <button
-      className={`py-2 px-4 flex justify-center items-center text-white rounded-full ${
+      className={`py-2 px-4 dark:bg-transparent bg-purple text-white flex justify-center items-center rounded-full ${
         additionalClass ? additionalClass : ""
       }`}
       onClick={onClick}
     >
       {text}
-      {editType === "edit" && <EditSvg />}
+      {icon && <EditSvg />}
     </button>
   );
 };

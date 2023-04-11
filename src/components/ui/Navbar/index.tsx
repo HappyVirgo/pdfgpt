@@ -17,12 +17,14 @@ const Navbar = () => {
       />
       <div className="flex items-center justify-between w-full">
         <div className="lg:w-4/12 w-1/2">
-          <p className="text-white xl:text-xl md:text-xl sm:text-base text-base lg:text-left md:text-left sm:text-left text-center xl:pl-20 lg:pl-14 md:pl-14 sm:pl-14 pl-12">
+          <p className="text-white xl:text-xl md:text-xl sm:text-base text-base lg:text-left md:text-left sm:text-left text-center xl:pl-20 lg:pl-14 md:pl-14 sm:pl-14 pl-14">
             {user?.name}
           </p>
         </div>
         <div className="text-right lg:w-8/12 sm:w-1/2 w-1/2 lg:pr-7 pr-3">
-          <span className="text-white lg:text-2xl sm:text-center text-xl font-medium">Plan Basic</span>
+          <span className="text-white sm:text-center 2xl:text-2xl xl:text-2xl lg:text-2xl md:text-2xl sm:text-base text-base pl-4">
+            Plan Basic
+          </span>
         </div>
         <div className="lg:pr-6 pr-0">
           <Button text="Edit" additionalClass="bg-purple" editType="edit" />

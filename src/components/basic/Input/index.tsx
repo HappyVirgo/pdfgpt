@@ -13,7 +13,7 @@ const Input: React.FC<InputProps> = ({ name, value, isEditable = false, onChange
       type="text"
       name={name}
       value={value}
-      className={`rounded-md py-2 bg-transparent outline-none ${
+      className={`w-full rounded-md py-2 bg-transparent outline-none ${
         !isEditable ? "border-none ring-0 px-0" : "border px-2 mt-2"
       }`}
       readOnly={!isEditable}

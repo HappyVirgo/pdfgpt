@@ -62,7 +62,7 @@ export default function Plan() {
       <main className={styles.main}>
         <MainLayout>
           <div className="w-full h-full md:flex">
-            <div className="w-full h-full dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial duration-300 transition-all py-10 shadow-lg xl:py-20 overflow-y-scroll">
+            <div className="w-full h-full dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial duration-300 transition-all py-10 shadow-lg xl:py-20">
               <div className="w-full 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8 mt-8">
                 <p className="text-center text-white text-2xl 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12 mt-12 px-4">
                   Lorem Ipsum is simply dummy text of the printing

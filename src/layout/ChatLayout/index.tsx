@@ -244,7 +244,8 @@ const ChatLayout: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full md:flex">
+    <div className="w-full h-full md:flex relative">
+      <div className="bg-white z-20 h-10 w-full absolute top-0 left-0 text-white">Text</div>
       <div
         className={`relative ${
           showPdf && file ? "w-full md:w-1/2 h-full" : "w-full"

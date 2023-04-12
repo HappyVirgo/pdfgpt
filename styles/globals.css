@@ -38,6 +38,30 @@ pre {
   background-color: #0B2447 !important;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #F5F5F5; 
+  border-radius: 5px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #0B2447;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0B2447; 
+  border-radius: 5px;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

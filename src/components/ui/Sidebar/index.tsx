@@ -90,7 +90,12 @@ const Sidebar = () => {
               <HomeIcon className="w-6" />
               Home
             </button>
-            <button onClick={() => window.location.reload()} className="flex items-center gap-3 hover:text-white">
+            <button
+              onClick={() => {
+                // window.location.reload()
+              }}
+              className="flex items-center gap-3 hover:text-white"
+            >
               <DocumentPlusIcon className="w-6" />
               New PDF
             </button>
@@ -112,50 +117,58 @@ const Sidebar = () => {
               <CurrencyDollarIcon className="w-6" />
               Pricing
             </button>
-            <Accordion title="Recent">
-              <div className="w-32 ml-6 text-sm">
-                {recent.length > 0 &&
-                  recent.map((item, index) => (
-                    <div
-                      key={index}
-                      className="py-0.5 cursor-pointer flex items-center"
-                      onClick={() => {
-                        setIsRecentView(true);
-                        setFile({ uid: Object.keys(item)[0], name: Object.values(item)[0] });
-                      }}
-                    >
-                      <span className="flex-1 truncate whitespace-nowrap">{Object.values(item)[0]}</span>
-                      <button
-                        className="flex-none"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setRecent((prev) => [...prev.filter((rec) => Object.keys(item)[0] !== Object.keys(rec)[0])]);
-                          if (typeof window !== "undefined") {
-                            localStorage.setItem(
-                              "files",
-                              JSON.stringify([...recent.filter((rec) => Object.keys(item)[0] !== Object.keys(rec)[0])])
-                            );
-                          }
-                        }}
-                      >
-                        <TrashIcon className="w-4" />
+            {user && (
+              <>
+                <Accordion title="Recent">
+                  <div className="w-32 ml-6 text-sm">
+                    {recent.length > 0 &&
+                      recent.map((item, index) => (
+                        <div
+                          key={index}
+                          className="py-0.5 cursor-pointer flex items-center"
+                          onClick={() => {
+                            setIsRecentView(true);
+                            setFile({ uid: Object.keys(item)[0], name: Object.values(item)[0] });
+                          }}
+                        >
+                          <span className="flex-1 truncate whitespace-nowrap">{Object.values(item)[0]}</span>
+                          <button
+                            className="flex-none"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setRecent((prev) => [
+                                ...prev.filter((rec) => Object.keys(item)[0] !== Object.keys(rec)[0]),
+                              ]);
+                              if (typeof window !== "undefined") {
+                                localStorage.setItem(
+                                  "files",
+                                  JSON.stringify([
+                                    ...recent.filter((rec) => Object.keys(item)[0] !== Object.keys(rec)[0]),
+                                  ])
+                                );
+                              }
+                            }}
+                          >
+                            <TrashIcon className="w-4" />
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+                </Accordion>
+                <Accordion title="Google Drive">
+                  <button className="w-32 ml-6 space-y-1 text-sm" onClick={() => {}}>
+                    {driveFiles?.map((item) => (
+                      <button className="flex items-center justify-start w-full gap-1" key={item.id}>
+                        <div className="flex-none">
+                          <DocumentTextIcon className="w-4" />
+                        </div>
+                        <div className="flex-1 text-left truncate whitespace-nowrap">{item.name}</div>
                       </button>
-                    </div>
-                  ))}
-              </div>
-            </Accordion>
-            <Accordion title="Google Drive">
-              <button className="w-32 ml-6 space-y-1 text-sm" onClick={() => {}}>
-                {driveFiles?.map((item) => (
-                  <button className="flex items-center justify-start w-full gap-1" key={item.id}>
-                    <div className="flex-none">
-                      <DocumentTextIcon className="w-4" />
-                    </div>
-                    <div className="flex-1 text-left truncate whitespace-nowrap">{item.name}</div>
+                    ))}
                   </button>
-                ))}
-              </button>
-            </Accordion>
+                </Accordion>
+              </>
+            )}
           </div>
           <div className="mt-10 text-md font-base">
             <button

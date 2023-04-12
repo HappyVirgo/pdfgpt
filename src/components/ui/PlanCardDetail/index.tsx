@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import StarSvg from "../../../assets/svg/star.svg";
 import Lightning1 from "../../../assets/svg/lightning1.svg";
 import Lightning2 from "../../../assets/svg/lightning2.svg";
 import Ultimate from "../../../assets/svg/ultimate.svg";
 import axios from "axios";
 import { ScaleLoader } from "react-spinners";
+import { AuthContext } from "../../../layout/AuthContextProvider";
 
 type PlanCardDetailProps = {
   id: number;
@@ -40,6 +41,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
   isAnnual,
 }) => {
   const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
   const handlePay = async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     setLoading(true);
@@ -94,7 +96,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
       {type !== "Basic" && (
         <div>
           <div
-            className={`font-medium text-3xl mt-8 pl-6 flex items-center ${
+            className={`font-medium text-3xl mt-8 pl-6 flex justify-center items-center ${
               type === "Ultimate" ? "text-black" : "text-white"
             }`}
           >
@@ -102,20 +104,21 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
             <hr className={`w-0.5 h-6 mx-6 ${type === "Ultimate" ? "bg-black" : "bg-white"}`} />
             <span className="text-xl font-normal">{isAnnual ? "Year" : "Month"}</span>
           </div>
-          <button
-            type="button"
-            className={`w-full flex items-center justify-center gap-2 p-3 my-10 text-white rounded-md ${
-              current ? "bg-red-400" : "bg-purple"
-            }`}
-            onClick={handlePay}
-          >
-            {current ? "Cancel Plan" : "Pay now"}
-            {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
-          </button>
+          {user && (
+            <button
+              type="button"
+              className={`w-full flex items-center justify-center gap-2 p-3 my-10 text-white rounded-md ${
+                current ? "bg-red-400" : "bg-purple"
+              }`}
+              onClick={handlePay}
+            >
+              {current ? "Cancel Plan" : "Pay now"}
+              {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
+            </button>
+          )}
         </div>
       )}
-      <hr />
-      <div className="flex pt-4">
+      <div className="flex pt-4 mt-5">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{name}</p>
       </div>

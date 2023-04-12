@@ -88,6 +88,10 @@ const Sidebar = () => {
               <SearchSVG />
               Change API Key
             </button>
+            <button className="flex items-center gap-3 hover:text-white" onClick={() => push("/plan")}>
+              <SearchSVG />
+              Pricing
+            </button>
             <Accordion title="Recent">
               <div className="w-32 ml-6 text-sm">
                 {recent.length > 0 &&
@@ -152,14 +156,14 @@ const Sidebar = () => {
                 <div className="absolute top-0 right-4">
                   <Menu>
                     <Menu.Button className="w-full px-2 py-2 text-right text-md">...</Menu.Button>
-                    <Menu.Items className="absolute right-0 text-sm text-right transform -translate-y-full rounded-lg shadow-lg bg-bgRadialStart w-fit top-4">
+                    <Menu.Items className="absolute right-0 w-20 text-sm text-right transform -translate-y-full rounded-lg shadow-lg bg-bgRadialStart top-4">
                       <Menu.Item>
                         <Link href="/profile">
-                          <div className="px-2 py-1">Profile</div>
+                          <div className="px-2 pt-1 pb-2">Profile</div>
                         </Link>
                       </Menu.Item>
                       <Menu.Item>
-                        <button onClick={logout} className="px-2 py-1">
+                        <button onClick={logout} className="px-2 pt-1 pb-2">
                           Logout
                         </button>
                       </Menu.Item>

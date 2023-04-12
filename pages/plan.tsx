@@ -44,7 +44,7 @@ export default function Plan() {
       <main className={styles.main}>
         <MainLayout>
           <div className="w-full h-full md:flex">
-            <div className="w-full h-full py-10 transition-all duration-300 shadow-lg dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
+            <div className="w-full h-full py-10 overflow-auto transition-all duration-300 shadow-lg  dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
               <div className="w-full mt-8 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8">
                 <p className="px-4 mt-12 text-2xl text-center text-white 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12">
                   Lorem Ipsum is simply dummy text of the printing

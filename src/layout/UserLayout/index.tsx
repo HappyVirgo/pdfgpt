@@ -229,6 +229,7 @@ const UserLayout: React.FC = () => {
                         <p>Card Number</p>
                         <Input
                           register={cardRegister}
+                          placeholder="0000 0000 0000 0000"
                           name="cardNumber"
                           isEditable={cardEditable}
                           error={`${cardErrors?.cardNumber?.message ?? ""}`}
@@ -239,6 +240,7 @@ const UserLayout: React.FC = () => {
                           <p>Expire Date</p>
                           <Input
                             register={cardRegister}
+                            placeholder="MM/YY"
                             name="cardExpiry"
                             isEditable={cardEditable}
                             error={`${cardErrors?.cardExpiry?.message ?? ""}`}
@@ -248,6 +250,7 @@ const UserLayout: React.FC = () => {
                           <p>CVC</p>
                           <Input
                             register={cardRegister}
+                            placeholder="000"
                             name="cvc"
                             isEditable={cardEditable}
                             error={`${cardErrors?.cvc?.message ?? ""}`}

@@ -3,8 +3,11 @@ import StarSvg from "../../../assets/svg/star.svg";
 import Lightning1 from "../../../assets/svg/lightning1.svg";
 import Lightning2 from "../../../assets/svg/lightning2.svg";
 import Ultimate from "../../../assets/svg/ultimate.svg";
+import axios from "axios";
 
 type PlanCardDetailProps = {
+  current?: boolean;
+  isAnnual?: boolean;
   type: "Basic" | "Advanced" | "Ultimate";
   name: string;
   pages: number;
@@ -13,10 +16,12 @@ type PlanCardDetailProps = {
   question: number;
   users: number;
   size: number;
+  price: number;
   connector: string;
 };
 
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
+  current,
   type,
   name,
   pages,
@@ -25,8 +30,22 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
   question,
   users,
   size,
+  price,
   connector,
+  isAnnual,
 }) => {
+  const handlePay = async () => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    try {
+      const { data } = await axios.post("api/stripe/subscribe", {
+        token: token,
+      });
+      console.log("data: ", data);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
   return (
     <div
       className={`rounded-md w-full px-4 pt-4 pb-10 mb-2 xl:max-w-[320px] lg:max-w-[320px] max-w-[auto] ${
@@ -53,45 +72,49 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
               type === "Ultimate" ? "text-black" : "text-white"
             }`}
           >
-            $18
+            ${isAnnual ? price * 10 : price}
             <hr className={`w-0.5 h-6 mx-6 ${type === "Ultimate" ? "bg-black" : "bg-white"}`} />
-            <span className="text-xl font-normal">Month</span>
+            <span className="text-xl font-normal">{isAnnual ? "Year" : "Month"}</span>
           </div>
-          <button type="button" className="bg-purple rounded-md p-3 my-10 w-full text-white">
-            Pay now
+          <button
+            type="button"
+            className={`w-full p-3 my-10 text-white rounded-md ${current ? "bg-red-400" : "bg-purple"}`}
+            onClick={handlePay}
+          >
+            {current ? "Cancel Plan" : "Pay now"}
           </button>
         </div>
       )}
       <hr />
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{name}</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{pages} pages/PDF</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{mega} MB/PDF</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{pdf} PDFs/day</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{question} questions/day</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{users} user</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{size} MB storage</p>
       </div>
-      <div className="pt-4 flex">
+      <div className="flex pt-4">
         <StarSvg className="flex-none" />
         <p className={`ml-3 ${type === "Ultimate" ? "text-black" : "text-white"}`}>{connector} connectors</p>
       </div>

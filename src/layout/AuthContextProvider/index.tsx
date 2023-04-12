@@ -9,6 +9,7 @@ type UserType = {
   name: string;
   picture: string;
   verified_email?: boolean;
+  current_plan_id?: number;
 };
 
 type TokenType = {

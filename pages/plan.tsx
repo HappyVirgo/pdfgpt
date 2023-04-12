@@ -1,52 +1,34 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Head from "next/head";
 
 import MainLayout from "../src/layout/MainLayout";
 import styles from "@/styles/Home.module.css";
 import PlanCardDetail from "../src/components/ui/PlanCardDetail";
+import axios from "axios";
+import { AuthContext } from "../src/layout/AuthContextProvider";
+
+const planDescription = ["Free plan", "Ideal for medium-sized businesses", "Ideal for large businesses"];
 
 export default function Plan() {
   const [isChecked, setIsChecked] = useState(false);
+  const { user } = useContext(AuthContext);
+  const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
 
   const handleChange = () => {
     setIsChecked((prevCheck) => !prevCheck);
   };
 
-  const plans = [
-    {
-      type: "Basic",
-      name: "Free plan",
-      pages: 120,
-      mega: 10,
-      pdf: 3,
-      question: 50,
-      users: 1,
-      size: 50,
-      connector: "0",
-    },
-    {
-      type: "Advanced",
-      name: "Ideal for medium-sized businesses",
-      pages: 2000,
-      mega: 32,
-      pdf: 50,
-      question: 1000,
-      users: 10,
-      size: 100,
-      connector: "Google drive",
-    },
-    {
-      type: "Ultimate",
-      name: "Ideal for large businesses",
-      pages: 5000,
-      mega: 64,
-      pdf: 100,
-      question: 2000,
-      users: 50,
-      size: 500,
-      connector: "Google drive, MS365 connectors",
-    },
-  ];
+  const getPlan = async () => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const { data } = await axios.post("api/stripe/plan", {
+      token: token,
+    });
+    setPlans(data.data.plans);
+  };
+
+  useEffect(() => {
+    getPlan();
+  }, []);
 
   return (
     <>
@@ -62,12 +44,12 @@ export default function Plan() {
       <main className={styles.main}>
         <MainLayout>
           <div className="w-full h-full md:flex">
-            <div className="w-full h-full dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial duration-300 transition-all py-10 shadow-lg xl:py-20">
-              <div className="w-full 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8 mt-8">
-                <p className="text-center text-white text-2xl 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12 mt-12 px-4">
+            <div className="w-full h-full py-10 transition-all duration-300 shadow-lg dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
+              <div className="w-full mt-8 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8">
+                <p className="px-4 mt-12 text-2xl text-center text-white 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12">
                   Lorem Ipsum is simply dummy text of the printing
                 </p>
-                <div className="flex justify-center items-center my-10">
+                <div className="flex items-center justify-center my-10">
                   <p className={`mr-6 text-base font-medium ${isChecked ? "text-slate-400" : "dark:text-white"}`}>
                     Monthly
                   </p>
@@ -87,18 +69,21 @@ export default function Plan() {
                 </div>
               </div>
               <div className="flex flex-wrap justify-center gap-4 px-10">
-                {plans.map((item, index) => (
+                {plans?.map((item: any, index: number) => (
                   <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 2xl:w-1/4">
                     <div className="flex justify-center">
                       <PlanCardDetail
-                        type={item.type as "Basic" | "Advanced" | "Ultimate"}
-                        name={item.name}
+                        current={user?.current_plan_id === item.id}
+                        isAnnual={isChecked}
+                        type={item.name as "Basic" | "Advanced" | "Ultimate"}
+                        name={planDescription[index]}
                         pages={item.pages}
                         mega={item.mega}
                         pdf={item.pdf}
                         question={item.question}
                         users={item.users}
                         size={item.size}
+                        price={item.price}
                         connector={item.connector}
                       />
                     </div>

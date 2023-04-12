@@ -129,7 +129,7 @@ const UserLayout: React.FC = () => {
 
   return (
     <div className="w-full h-full md:flex">
-      <div className="flex justify-center w-full h-full py-10 transition-all duration-300 shadow-lg dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
+      <div className="flex justify-center w-full h-full py-10 overflow-auto transition-all duration-300 shadow-lg dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
         <div className="w-full max-w-[1180px] left-1/2 lg:mx-20 md:mx-15 sm:mx-10 mx-10 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8 mt-8">
           <Navbar />
           <div className="grid grid-cols-12 gap-4 mt-16">

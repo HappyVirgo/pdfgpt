@@ -51,6 +51,7 @@ interface ThemePropsInterface {
 }
 
 const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [showPdf, setShowPdf] = useState<boolean>(false);
   const [file, setFile] = useState<File | { [key: string]: string } | undefined>(undefined);
@@ -78,6 +79,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
 
   async function autoLogin() {
     try {
+      setIsLoading(true);
       const token = typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
       const google_token = typeof window !== "undefined" ? localStorage.getItem("googleAuthToken") : null;
       if (token && google_token) {
@@ -88,10 +90,12 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
       }
+      setIsLoading(false);
     } catch (error: any) {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("googleAuthToken");
+      setIsLoading(false);
     }
   }
 
@@ -115,7 +119,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
     setValueToLocalStorage();
   }
 
-  return (
+  return isLoading ? null : (
     <MainContext.Provider
       value={{
         isDarkTheme,

@@ -4,9 +4,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { data, token } = req.body;
   try {
-    const { data: response } = await axios.put(
+    const { data: response } = await axios.post(
       `${process.env.BACKEND_API_BASEURL}/subscription/customer`,
-      { data },
+      { ...data },
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import Button from "../../components/basic/Button";
 import Input from "../../components/basic/Input";
@@ -9,43 +10,26 @@ import PlanCard from "../../components/ui/PlanCard";
 import { AuthContext } from "../AuthContextProvider";
 
 const UserLayout: React.FC = () => {
+  const { push } = useRouter();
   const { user, setUser } = useContext(AuthContext);
 
   const [firstName, setFirstName] = useState<string | undefined>("");
   const [lastName, setLastName] = useState<string | undefined>("");
 
   const [isPaymentMethod, setIsPaymentMethod] = useState(false);
+  const [cardInfo, setCardInfo] = useState<{ number: string; expiry: string }>({ number: "", expiry: "" });
   const [cardNumber, setCardNumber] = useState<string | undefined>("");
-  const [inputCardNumber, setInputCardNumber] = useState<string | undefined>("");
   const [cardExpiry, setCardExpiry] = useState<string | undefined>("");
-  const [inputCardExpiry, setInputCardExpiry] = useState<string | undefined>("");
   const [cvc, setCvc] = useState<string | undefined>();
 
   const [profileEditable, setProfileEditable] = useState(false);
   const [cardEditable, setCardEditable] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      const [first, last] = user?.name?.split(" ");
-      setFirstName(first);
-      setLastName(last);
-    }
-  }, [user]);
-
-  const formattedCardNumber = (value: string) => {
-    const maskingSymbol = "•";
-
-    const lastFourDigits = value.slice(-4);
-    const maskedString = value.slice(0, -4).replace(/\d/g, maskingSymbol);
-    const formattedString = `${maskedString}${lastFourDigits}`;
-
-    return formattedString.replace(/(\u2022{4})/g, "$1 ");
-  };
-
   const formatCardNumber = (value: string) => {
     const currentValue = value.replace(/[^\d]/g, "");
     if (currentValue.length > 16) return;
-    setInputCardNumber(currentValue.replace(/(\d{4})/g, "$1 ").replace(/[^\d]+$/g, ""));
+    setCardNumber(currentValue.replace(/(\d{4})/g, "$1 ").replace(/[^\d]+$/g, ""));
+    setCardInfo((prev) => ({ ...prev, number: currentValue.replace(/(\d{4})/g, "$1 ").replace(/[^\d]+$/g, "") }));
   };
 
   const formatExpiry = (value: string) => {
@@ -53,7 +37,8 @@ const UserLayout: React.FC = () => {
     if (currentValue.length > 4) {
       return;
     }
-    setInputCardExpiry(currentValue.replace(/(\d{2})/g, "$1 / ").replace(/[^\d]+$/g, ""));
+    setCardExpiry(currentValue.replace(/(\d{2})/g, "$1 / ").replace(/[^\d]+$/g, ""));
+    setCardInfo((prev) => ({ ...prev, expiry: currentValue.replace(/(\d{2})/g, "$1 / ").replace(/[^\d]+$/g, "") }));
   };
 
   const formatCvc = (value: string) => {
@@ -71,20 +56,24 @@ const UserLayout: React.FC = () => {
         setLastName(last);
         if (data?.payment_methods) {
           setIsPaymentMethod(true);
-          setCardNumber(data?.payment_methods?.data[0].card.last4.padStart(16, "•"));
-          setCardExpiry(
-            data?.payment_methods?.data[0].card.exp_month +
+          setCardInfo({
+            number: data?.payment_methods?.data[0].card.last4.padStart(16, "•"),
+            expiry:
+              data?.payment_methods?.data[0].card.exp_month +
               " / " +
-              data?.payment_methods?.data[0].card.exp_year.toString().slice(-2)
-          );
+              data?.payment_methods?.data[0].card.exp_year.toString().slice(-2),
+          });
         }
       }
     } catch (error: any) {
-      console.log(error);
+      push("/");
     }
   }
 
   useEffect(() => {
+    if (!user) {
+      push("/");
+    }
     getCustomerInfo();
   }, []);
 
@@ -105,16 +94,27 @@ const UserLayout: React.FC = () => {
   const saveCardInfo = async () => {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-      const newData = {
-        number: inputCardNumber?.replace(/\s/g, ""),
-        exp_month: inputCardExpiry?.split("/")[0].replace(/\s/g, ""),
-        exp_year: "20" + inputCardExpiry?.split("/")[1].replace(/\s/g, ""),
-        cvc: cvc,
-      };
-      const { data } = await axios.post("api/stripe/update-customer-info", {
-        token: token,
-        newData: newData,
-      });
+      if (isPaymentMethod) {
+        const data = {
+          exp_month: cardExpiry?.split("/")[0].replace(/\s/g, ""),
+          exp_year: "20" + cardExpiry?.split("/")[1].replace(/\s/g, ""),
+        };
+        await axios.post("api/stripe/update-customer-info", {
+          token: token,
+          data,
+        });
+      } else {
+        const data = {
+          number: cardNumber?.replace(/\s/g, ""),
+          exp_month: cardExpiry?.split("/")[0].replace(/\s/g, ""),
+          exp_year: "20" + cardExpiry?.split("/")[1].replace(/\s/g, ""),
+          cvc: cvc,
+        };
+        await axios.post("api/stripe/create-customer", {
+          token: token,
+          data,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -190,40 +190,46 @@ const UserLayout: React.FC = () => {
                 <div className="mt-8 lg:w-1/2 md:w-full">
                   {cardEditable ? (
                     <div>
-                      <div>
-                        <p>Card Number</p>
-                        <Input
-                          name="card_number"
-                          value={inputCardNumber}
-                          isEditable={cardEditable}
-                          onChange={(e: any) => {
-                            formatCardNumber(e.target.value);
-                          }}
-                        />
-                      </div>
+                      {!isPaymentMethod && (
+                        <div>
+                          <p>Card Number</p>
+                          <Input
+                            name="card_number"
+                            value={cardNumber}
+                            disabled={isPaymentMethod}
+                            isEditable={cardEditable}
+                            onChange={(e: any) => {
+                              formatCardNumber(e.target.value);
+                            }}
+                          />
+                        </div>
+                      )}
                       <div className="flex gap-4 mt-4">
                         <div className="w-full">
                           <p>Expire Date</p>
                           <Input
                             name="card_expiry"
-                            value={inputCardExpiry}
+                            value={cardExpiry}
                             isEditable={cardEditable}
                             onChange={(e: any) => {
                               formatExpiry(e.target.value);
                             }}
                           />
                         </div>
-                        <div className="w-full">
-                          <p>CVC</p>
-                          <Input
-                            name="cvc"
-                            value={cvc}
-                            isEditable={cardEditable}
-                            onChange={(e: any) => {
-                              formatCvc(e.target.value);
-                            }}
-                          />
-                        </div>
+                        {!isPaymentMethod && (
+                          <div className="w-full">
+                            <p>CVC</p>
+                            <Input
+                              name="cvc"
+                              disabled={isPaymentMethod}
+                              value={cvc}
+                              isEditable={cardEditable}
+                              onChange={(e: any) => {
+                                formatCvc(e.target.value);
+                              }}
+                            />
+                          </div>
+                        )}
                       </div>
                       <div className="flex justify-end gap-4 mt-8 mb-4">
                         <Button text="Save" additionalClass="border" onClick={() => saveCardInfo()} />
@@ -240,9 +246,9 @@ const UserLayout: React.FC = () => {
                     isPaymentMethod && (
                       <div className="p-6 text-base text-white rounded-md bg-purple bg-gradient-to-b from-indigo-500">
                         <p>YOUR NAME</p>
-                        <div className="mt-10">{formattedCardNumber(cardNumber ?? "")}</div>
+                        <div className="mt-10">{cardInfo.number}</div>
                         <div className="flex justify-between mt-3">
-                          <p>{cardExpiry}</p>
+                          <p>{cardInfo.expiry}</p>
                           <MasterCardIcon />
                         </div>
                       </div>

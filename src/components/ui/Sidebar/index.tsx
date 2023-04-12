@@ -19,6 +19,7 @@ import Accordion from "../../basic/Accordion";
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Sidebar = () => {
   const {
@@ -33,6 +34,7 @@ const Sidebar = () => {
     driveFiles,
     setDriveFiles,
   } = useContext(MainContext);
+  const { push } = useRouter();
   const { user, setUser, setTokens } = useContext(AuthContext);
   const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -60,6 +62,7 @@ const Sidebar = () => {
     setTokens(null);
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
+    push("/");
   };
 
   return (

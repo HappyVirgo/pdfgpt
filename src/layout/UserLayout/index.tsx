@@ -9,6 +9,8 @@ import Navbar from "../../components/ui/Navbar";
 import PlanCard from "../../components/ui/PlanCard";
 import { AuthContext } from "../AuthContextProvider";
 
+const planDescription = ["Free plan", "Ideal for medium-sized businesses", "Ideal for large businesses"];
+
 const UserLayout: React.FC = () => {
   const { push } = useRouter();
   const { user, setUser } = useContext(AuthContext);
@@ -24,6 +26,8 @@ const UserLayout: React.FC = () => {
 
   const [profileEditable, setProfileEditable] = useState(false);
   const [cardEditable, setCardEditable] = useState(false);
+
+  const [plan, setPlan] = useState<undefined | { [key: string]: any }>();
 
   const formatCardNumber = (value: string) => {
     const currentValue = value.replace(/[^\d]/g, "");
@@ -51,7 +55,9 @@ const UserLayout: React.FC = () => {
       const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
       if (token) {
         const { data } = await axios.post("api/stripe/get-customer-info", { token: token });
+        console.log("data: ", data);
         const [first, last] = data?.user?.name?.split(" ");
+        setPlan(data.plan);
         setFirstName(first);
         setLastName(last);
         if (data?.payment_methods) {
@@ -186,6 +192,16 @@ const UserLayout: React.FC = () => {
                       setCardEditable(true);
                     }}
                   />
+                  {isPaymentMethod && (
+                    <Button
+                      text="Remove"
+                      icon
+                      additionalClass="border ml-3"
+                      onClick={() => {
+                        setCardEditable(true);
+                      }}
+                    />
+                  )}
                 </div>
                 <div className="mt-8 lg:w-1/2 md:w-full">
                   {cardEditable ? (
@@ -258,7 +274,18 @@ const UserLayout: React.FC = () => {
               </div>
             </div>
             <div className="col-span-12 mb-8 lg:col-span-4 md:col-span-6 sm:col-span-12">
-              <PlanCard />
+              {!!plan && (
+                <PlanCard
+                  title={`${plan.name}`}
+                  description={planDescription[plan.id]}
+                  pages={plan.pages}
+                  pdf={plan.pdf}
+                  query={plan.query}
+                  size={plan.size}
+                  users={plan.user}
+                  price={plan.price}
+                />
+              )}
             </div>
           </div>
         </div>

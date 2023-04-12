@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import Button from "../../basic/Button";
+import Link from "next/link";
 
 const Navbar = () => {
   const { user } = useContext(AuthContext);
@@ -27,7 +28,9 @@ const Navbar = () => {
           </span>
         </div>
         <div className="pr-0 lg:pr-6">
-          <Button text="Edit" additionalClass="bg-purple" editType="edit" />
+          <Link href="/plan">
+            <Button text="Edit" additionalClass="bg-purple" icon />
+          </Link>
         </div>
       </div>
     </div>

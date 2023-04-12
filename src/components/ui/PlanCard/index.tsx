@@ -1,21 +1,34 @@
 import React from "react";
 import StarSvg from "../../../assets/svg/star.svg";
 
-const PlanCard = () => {
+type PlanCardProps = {
+  title: string;
+  description: string;
+  pages: number;
+  pdf: number;
+  query: number;
+  size: number;
+  users: number;
+  price: number;
+};
+
+const PlanCard: React.FC<PlanCardProps> = ({ title, description, pages, pdf, query, size, users, price }) => {
   const features = [
-    "Free plan",
-    "120 pages/PDF",
-    "10 MB/PDF",
-    "3 PDFs/day",
-    "50 questions/day",
-    "1 user",
+    description,
+    `${pages} pages/PDF`,
+    `${size} MB/PDF`,
+    `${pdf} PDFs/day`,
+    `${query} questions/day`,
+    `${users} user`,
     "50 MB storage",
     "0 connectors",
   ];
 
   return (
     <div className="bg-bgRadialStart rounded-md p-2.5">
-      <p className="text-center text-white font-medium text-lg my-3">Basic</p>
+      <p className="my-3 text-lg font-medium text-center text-white">
+        {title} <span className="ml-2 text-base">${price}</span>
+      </p>
       <hr />
       <div className="py-3">
         {features.map((name, index) => (

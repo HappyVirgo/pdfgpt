@@ -6,11 +6,11 @@ import Ultimate from "../../../assets/svg/ultimate.svg";
 import axios from "axios";
 import { ScaleLoader } from "react-spinners";
 import { AuthContext } from "../../../layout/AuthContextProvider";
+import { toast } from "react-toastify";
 
 type PlanCardDetailProps = {
   id: number;
   productId?: string;
-  current?: boolean;
   isAnnual?: boolean;
   type: "Basic" | "Advanced" | "Ultimate";
   name: string;
@@ -27,7 +27,6 @@ type PlanCardDetailProps = {
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
   id,
   productId,
-  current,
   type,
   name,
   pages,
@@ -41,34 +40,41 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
   isAnnual,
 }) => {
   const [loading, setLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user, setUser, tokens } = useContext(AuthContext);
   const handlePay = async () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    const token = tokens?.accessToken;
     setLoading(true);
-    if (current) {
+    if (user?.current_plan_id === id) {
       try {
         await axios.post("api/stripe/cancel-subscribe", {
           body: {
-            plan_id: id,
+            plan_id: 1,
             product_id: productId,
           },
           token: token,
         });
-      } catch (error) {
-        console.log("error: ", error);
+        if (user) {
+          setUser({ ...user, current_plan_id: 1 });
+        }
+        toast("Subscription is canceled");
+      } catch (error: any) {
+        toast(error?.response?.data?.message ?? "Some thing went wrong");
       }
     } else {
       try {
-        const { data } = await axios.post("api/stripe/subscribe", {
+        await axios.post("api/stripe/subscribe", {
           body: {
             plan_id: id,
             product_id: productId,
           },
           token: token,
         });
-        console.log("data: ", data);
-      } catch (error) {
-        console.log("error: ", error);
+        if (user) {
+          setUser({ ...user, current_plan_id: id });
+        }
+        toast("Subscription succeed");
+      } catch (error: any) {
+        toast(error?.response?.data?.message ?? "Some thing went wrong");
       }
     }
     setLoading(false);
@@ -108,11 +114,11 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
             <button
               type="button"
               className={`w-full flex items-center justify-center gap-2 p-3 my-10 text-white rounded-md ${
-                current ? "bg-red-400" : "bg-purple"
+                user.current_plan_id === id ? "bg-red-400" : "bg-purple"
               }`}
               onClick={handlePay}
             >
-              {current ? "Cancel Plan" : "Pay now"}
+              {user.current_plan_id === id ? "Cancel Plan" : "Pay now"}
               {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
             </button>
           )}

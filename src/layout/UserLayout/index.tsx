@@ -109,7 +109,6 @@ const UserLayout: React.FC = () => {
         }
       }
     } catch (error: any) {
-      console.log("error: ", error);
       push("/");
     }
   }
@@ -154,6 +153,7 @@ const UserLayout: React.FC = () => {
         token: token,
         data: body,
       });
+      await getCustomerInfo();
       setIsLoading(false);
       setCardEditable(false);
       toast("Card is saved!");

@@ -1,17 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 
 import MainLayout from "../src/layout/MainLayout";
 import styles from "@/styles/Home.module.css";
 import PlanCardDetail from "../src/components/ui/PlanCardDetail";
 import axios from "axios";
-import { AuthContext } from "../src/layout/AuthContextProvider";
 
 const planDescription = ["Free plan", "Ideal for medium-sized businesses", "Ideal for large businesses"];
 
 export default function Plan() {
   const [isChecked, setIsChecked] = useState(false);
-  const { user } = useContext(AuthContext);
   const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
 
   const handleChange = () => {
@@ -75,7 +73,6 @@ export default function Plan() {
                       <PlanCardDetail
                         id={item.id}
                         productId={isChecked ? item.stripe_product_annual_id : item.stripe_product_id}
-                        current={user?.current_plan_id === item.id}
                         isAnnual={isChecked}
                         type={item.name as "Basic" | "Advanced" | "Ultimate"}
                         name={planDescription[index]}

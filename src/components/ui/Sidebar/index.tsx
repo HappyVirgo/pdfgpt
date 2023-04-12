@@ -58,7 +58,6 @@ const Sidebar = () => {
       localStorage.setItem("googleAuthToken", tokenResponse?.access_token ?? "");
       try {
         const { data } = await axios.post("api/auth", { tokens: tokenResponse });
-        console.log("data: ", data);
         setUser(data?.user);
         setDriveFiles(data?.files ?? []);
         setTokens(data?.tokens);

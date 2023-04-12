@@ -27,7 +27,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, description, pages, pdf, que
   return (
     <div className="bg-bgRadialStart rounded-md p-2.5">
       <p className="my-3 text-lg font-medium text-center text-white">
-        {title} <span className="ml-2 text-base">${price}</span>
+        {title} {!!price && <span className="ml-2 text-base">${price}</span>}
       </p>
       <hr />
       <div className="py-3">

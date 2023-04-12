@@ -4,6 +4,8 @@
 
   --clr-text-dark: #0B2447; /* gray-200 */
   --clr-text-light: #c1c1c1; /* zinc-50 */
+
+  --toastify-color-dark: #0B2447;
 }
 
 .dark {
@@ -30,6 +32,10 @@ pre {
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.Toastify__toast-theme--dark {
+  background-color: #0B2447 !important;
 }
 
 @tailwind base;

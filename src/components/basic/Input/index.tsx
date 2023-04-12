@@ -6,21 +6,34 @@ type InputProps = {
   disabled?: boolean;
   isEditable?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  register: any;
 };
 
-const Input: React.FC<InputProps> = ({ name, value, isEditable = false, disabled = false, onChange }) => {
+const Input: React.FC<InputProps> = ({
+  name,
+  value,
+  isEditable = false,
+  disabled = false,
+  onChange,
+  register,
+  error,
+}) => {
   return (
-    <input
-      type="text"
-      name={name}
-      value={value}
-      disabled={disabled}
-      className={`w-full rounded-md py-2 bg-transparent outline-none ${
-        !isEditable ? "border-none ring-0 px-0" : "border px-2 mt-2"
-      }`}
-      readOnly={!isEditable}
-      onChange={onChange}
-    />
+    <>
+      <input
+        type="text"
+        name={name}
+        value={value}
+        disabled={disabled}
+        className={`w-full rounded-md py-2 bg-transparent outline-none ${
+          !isEditable ? "border-none ring-0 px-0" : "border px-2 mt-2"
+        }`}
+        onChange={onChange}
+        {...register(name)}
+      />
+      {!!error && <p className="text-sm text-red-500">{error}</p>}
+    </>
   );
 };
 

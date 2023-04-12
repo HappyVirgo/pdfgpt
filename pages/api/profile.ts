@@ -16,18 +16,18 @@ type ResponseDateType = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseDateType>) {
-  const { userId, accessToken, newData } = req.body;
+  const { userId, accessToken, data } = req.body;
   try {
-    const { data } = await axios.put(
+    const { data: response } = await axios.put(
       `${process.env.BACKEND_API_BASEURL}/user/${userId}`,
-      { data: newData },
+      { data },
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       }
     );
-    res.status(200).json({ ...data });
+    res.status(200).json({ ...response });
   } catch (error: any) {
     return res.status(500).json(error?.response?.data);
   }

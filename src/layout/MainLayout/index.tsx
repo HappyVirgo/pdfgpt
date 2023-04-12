@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../components/ui/Sidebar";
 import Modal from "../../components/basic/Modal";
 import { MainContext } from "../MainContextProvider";
@@ -52,6 +54,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
         </div>
       </Modal>
+      <ToastContainer
+        autoClose={5000}
+        position="top-right"
+        closeOnClick={true}
+        pauseOnHover={true}
+        hideProgressBar={false}
+        draggable={true}
+        theme="dark"
+      />
     </div>
   );
 };

@@ -13,6 +13,7 @@ export default function Plan() {
   const [isChecked, setIsChecked] = useState(false);
   const { user } = useContext(AuthContext);
   const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
+  console.log("plans: ", plans);
 
   const handleChange = () => {
     setIsChecked((prevCheck) => !prevCheck);
@@ -73,6 +74,8 @@ export default function Plan() {
                   <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 2xl:w-1/4">
                     <div className="flex justify-center">
                       <PlanCardDetail
+                        id={item.id}
+                        productId={isChecked ? item.stripe_product_annual_id : item.stripe_product_id}
                         current={user?.current_plan_id === item.id}
                         isAnnual={isChecked}
                         type={item.name as "Basic" | "Advanced" | "Ultimate"}

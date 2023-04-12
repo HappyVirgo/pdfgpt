@@ -6,6 +6,8 @@ import Ultimate from "../../../assets/svg/ultimate.svg";
 import axios from "axios";
 
 type PlanCardDetailProps = {
+  id: number;
+  productId?: string;
   current?: boolean;
   isAnnual?: boolean;
   type: "Basic" | "Advanced" | "Ultimate";
@@ -21,6 +23,8 @@ type PlanCardDetailProps = {
 };
 
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
+  id,
+  productId,
   current,
   type,
   name,
@@ -36,13 +40,31 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
 }) => {
   const handlePay = async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    try {
-      const { data } = await axios.post("api/stripe/subscribe", {
-        token: token,
-      });
-      console.log("data: ", data);
-    } catch (error) {
-      console.log("error: ", error);
+    if (current) {
+      try {
+        await axios.post("api/stripe/cancel-subscribe", {
+          body: {
+            plan_id: id,
+            product_id: productId,
+          },
+          token: token,
+        });
+      } catch (error) {
+        console.log("error: ", error);
+      }
+    } else {
+      try {
+        const { data } = await axios.post("api/stripe/subscribe", {
+          body: {
+            plan_id: id,
+            product_id: productId,
+          },
+          token: token,
+        });
+        console.log("data: ", data);
+      } catch (error) {
+        console.log("error: ", error);
+      }
     }
   };
 

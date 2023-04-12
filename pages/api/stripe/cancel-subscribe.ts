@@ -2,9 +2,9 @@ import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { token, body } = req.body;
+  const { token } = req.body;
   try {
-    const { data } = await axios.post(`${process.env.BACKEND_API_BASEURL}/subscription/subscribe`, body, {
+    const { data } = await axios.delete(`${process.env.BACKEND_API_BASEURL}/subscription/subscribe`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

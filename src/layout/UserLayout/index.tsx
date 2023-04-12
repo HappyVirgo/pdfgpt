@@ -63,6 +63,10 @@ const UserLayout: React.FC = () => {
 
   useEffect(() => {
     cardReset({ cardNumber: formatCardNumber(number), cardExpiry: formatExpiry(expiry), cvc: formatCvc(cvc) });
+    setCardInfo({
+      number: number.slice(-4).padStart(16, "•"),
+      expiry: formatExpiry(expiry),
+    });
   }, [number, expiry, cvc]);
 
   const formatCardNumber = (value: string) => {
@@ -93,7 +97,7 @@ const UserLayout: React.FC = () => {
         const [first, last] = data?.user?.name?.split(" ");
         setPlan(data.plan);
         userReset({ firstName: first, lastName: last });
-        if (data?.payment_methods) {
+        if (data?.payment_methods?.data?.length > 0) {
           setCardInfo({
             number: data?.payment_methods?.data[0].card.last4.padStart(16, "•"),
             expiry:
@@ -105,6 +109,7 @@ const UserLayout: React.FC = () => {
         }
       }
     } catch (error: any) {
+      console.log("error: ", error);
       push("/");
     }
   }
@@ -136,6 +141,7 @@ const UserLayout: React.FC = () => {
   };
 
   const saveCardInfo = async (data: FieldValues) => {
+    setIsLoading(true);
     try {
       const token = tokens?.accessToken;
       const body = {
@@ -148,10 +154,12 @@ const UserLayout: React.FC = () => {
         token: token,
         data: body,
       });
+      setIsLoading(false);
       setCardEditable(false);
       toast("Card is saved!");
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast(error?.response?.data?.message ?? "Some thing went wrong");
+      setIsLoading(false);
     }
   };
 
@@ -247,7 +255,7 @@ const UserLayout: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex justify-end gap-4 mt-8 mb-4">
-                        <Button text="Save" additionalClass="border" type="submit" />
+                        <Button text="Save" additionalClass="border" type="submit" loading={isLoading} />
                         <Button
                           text="Cancel"
                           additionalClass="border"

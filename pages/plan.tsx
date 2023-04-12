@@ -13,7 +13,6 @@ export default function Plan() {
   const [isChecked, setIsChecked] = useState(false);
   const { user } = useContext(AuthContext);
   const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
-  console.log("plans: ", plans);
 
   const handleChange = () => {
     setIsChecked((prevCheck) => !prevCheck);

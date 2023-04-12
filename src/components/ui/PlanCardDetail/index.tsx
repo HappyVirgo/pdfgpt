@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import StarSvg from "../../../assets/svg/star.svg";
 import Lightning1 from "../../../assets/svg/lightning1.svg";
 import Lightning2 from "../../../assets/svg/lightning2.svg";
 import Ultimate from "../../../assets/svg/ultimate.svg";
 import axios from "axios";
+import { ScaleLoader } from "react-spinners";
 
 type PlanCardDetailProps = {
   id: number;
@@ -38,8 +39,10 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
   connector,
   isAnnual,
 }) => {
+  const [loading, setLoading] = useState(false);
   const handlePay = async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    setLoading(true);
     if (current) {
       try {
         await axios.post("api/stripe/cancel-subscribe", {
@@ -66,6 +69,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
         console.log("error: ", error);
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -100,10 +104,13 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
           </div>
           <button
             type="button"
-            className={`w-full p-3 my-10 text-white rounded-md ${current ? "bg-red-400" : "bg-purple"}`}
+            className={`w-full flex items-center justify-center gap-2 p-3 my-10 text-white rounded-md ${
+              current ? "bg-red-400" : "bg-purple"
+            }`}
             onClick={handlePay}
           >
             {current ? "Cancel Plan" : "Pay now"}
+            {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
           </button>
         </div>
       )}

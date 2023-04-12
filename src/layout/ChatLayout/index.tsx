@@ -13,6 +13,7 @@ import { MainContext } from "../MainContextProvider";
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
 import "react-pdf/dist/esm/Page/TextLayer.css";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type MessageItem = {
   type: "QUESTION" | "REPLY";
@@ -245,7 +246,21 @@ const ChatLayout: React.FC = () => {
 
   return (
     <div className="w-full h-full md:flex relative">
-      <div className="bg-white z-20 h-10 w-full absolute top-0 left-0 text-white">Text</div>
+      <div className="flex w-full overflow-x-auto bg-primary items-center z-20 h-10 absolute top-0 left-0 text-white">
+        {[1, 2, 3, 4].map((item) => (
+          <div
+            key={item}
+            className={`w-32 h-full flex-none text-xs relative text-center pt-3 px-2 truncate whitespace-nowrap border-r border-bgRadialStart ${
+              item === 2 ? "rounded-tr-lg bg-bgRadialEnd" : "bg-primary rounded-none"
+            }`}
+          >
+            dddddddd
+            <button className="absolute right-0 top-0 p-1">
+              <XMarkIcon className="w-4 text-white" />
+            </button>
+          </div>
+        ))}
+      </div>
       <div
         className={`relative ${
           showPdf && file ? "w-full md:w-1/2 h-full" : "w-full"

@@ -9,13 +9,17 @@ import PlanCard from "../../components/ui/PlanCard";
 import { AuthContext } from "../AuthContextProvider";
 
 const UserLayout: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const [firstName, setFirstName] = useState<string | undefined>("");
   const [lastName, setLastName] = useState<string | undefined>("");
+
+  const [isPaymentMethod, setIsPaymentMethod] = useState(false);
   const [cardNumber, setCardNumber] = useState<string | undefined>("");
+  const [inputCardNumber, setInputCardNumber] = useState<string | undefined>("");
   const [cardExpiry, setCardExpiry] = useState<string | undefined>("");
-  const [cvv, setCvv] = useState<string | undefined>();
+  const [inputCardExpiry, setInputCardExpiry] = useState<string | undefined>("");
+  const [cvc, setCvc] = useState<string | undefined>();
 
   const [profileEditable, setProfileEditable] = useState(false);
   const [cardEditable, setCardEditable] = useState(false);
@@ -25,9 +29,6 @@ const UserLayout: React.FC = () => {
       const [first, last] = user?.name?.split(" ");
       setFirstName(first);
       setLastName(last);
-      setCardNumber("1234 5678 1234 5678");
-      setCardExpiry("02/25");
-      setCvv("650");
     }
   }, [user]);
 
@@ -44,7 +45,7 @@ const UserLayout: React.FC = () => {
   const formatCardNumber = (value: string) => {
     const currentValue = value.replace(/[^\d]/g, "");
     if (currentValue.length > 16) return;
-    setCardNumber(currentValue.replace(/(\d{4})/g, "$1 ").replace(/[^\d]+$/g, ""));
+    setInputCardNumber(currentValue.replace(/(\d{4})/g, "$1 ").replace(/[^\d]+$/g, ""));
   };
 
   const formatExpiry = (value: string) => {
@@ -52,24 +53,49 @@ const UserLayout: React.FC = () => {
     if (currentValue.length > 4) {
       return;
     }
-    setCardExpiry(currentValue.replace(/(\d{2})/g, "$1 / ").replace(/[^\d]+$/g, ""));
+    setInputCardExpiry(currentValue.replace(/(\d{2})/g, "$1 / ").replace(/[^\d]+$/g, ""));
   };
 
-  const formatCvv = (value: string) => {
+  const formatCvc = (value: string) => {
     if (value.length > 3) return;
-    setCvv(value);
+    setCvc(value);
   };
+
+  async function getCustomerInfo() {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+      if (token) {
+        const { data } = await axios.post("api/stripe/get-customer-info", { token: token });
+        const [first, last] = data?.user?.name?.split(" ");
+        setFirstName(first);
+        setLastName(last);
+        if (data?.payment_methods) {
+          setIsPaymentMethod(true);
+          setCardNumber(data?.payment_methods?.data[0].card.last4.padStart(16, "•"));
+          setCardExpiry(
+            data?.payment_methods?.data[0].card.exp_month +
+              " / " +
+              data?.payment_methods?.data[0].card.exp_year.toString().slice(-2)
+          );
+        }
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getCustomerInfo();
+  }, []);
 
   const savePersonalInfo = async () => {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-      const data = {
-        user_id: user?.id,
-        firstName: firstName,
-        lastName: lastName,
+      const newData = {
+        name: firstName + " " + lastName,
       };
-      console.log("data: ", data);
-      await axios.post("api/profile", { accessToken: token, data: data });
+      const { data } = await axios.post("api/profile", { userId: user?.id, accessToken: token, newData: newData });
+      setUser(data?.user);
     } catch (error) {
       console.log(error);
     }
@@ -79,13 +105,16 @@ const UserLayout: React.FC = () => {
   const saveCardInfo = async () => {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-      const data = {
-        user_id: user?.id,
-        cardNumber: cardNumber,
-        cardExpiry: cardExpiry,
-        cvv: cvv,
+      const newData = {
+        number: inputCardNumber?.replace(/\s/g, ""),
+        exp_month: inputCardExpiry?.split("/")[0].replace(/\s/g, ""),
+        exp_year: "20" + inputCardExpiry?.split("/")[1].replace(/\s/g, ""),
+        cvc: cvc,
       };
-      await axios.post("api/card", { accessToken: token, data: data });
+      const { data } = await axios.post("api/stripe/update-customer-info", {
+        token: token,
+        newData: newData,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -150,7 +179,7 @@ const UserLayout: React.FC = () => {
                 <div className="flex items-center mt-10">
                   <p className="mr-8 text-2xl">Your card</p>
                   <Button
-                    text="Edit"
+                    text={isPaymentMethod ? "Edit" : "Add"}
                     icon
                     additionalClass="border"
                     onClick={() => {
@@ -165,7 +194,7 @@ const UserLayout: React.FC = () => {
                         <p>Card Number</p>
                         <Input
                           name="card_number"
-                          value={cardNumber}
+                          value={inputCardNumber}
                           isEditable={cardEditable}
                           onChange={(e: any) => {
                             formatCardNumber(e.target.value);
@@ -177,7 +206,7 @@ const UserLayout: React.FC = () => {
                           <p>Expire Date</p>
                           <Input
                             name="card_expiry"
-                            value={cardExpiry}
+                            value={inputCardExpiry}
                             isEditable={cardEditable}
                             onChange={(e: any) => {
                               formatExpiry(e.target.value);
@@ -185,13 +214,13 @@ const UserLayout: React.FC = () => {
                           />
                         </div>
                         <div className="w-full">
-                          <p>CVV</p>
+                          <p>CVC</p>
                           <Input
-                            name="cvv"
-                            value={cvv}
+                            name="cvc"
+                            value={cvc}
                             isEditable={cardEditable}
                             onChange={(e: any) => {
-                              formatCvv(e.target.value);
+                              formatCvc(e.target.value);
                             }}
                           />
                         </div>
@@ -208,14 +237,16 @@ const UserLayout: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="p-6 text-base text-white rounded-md bg-purple bg-gradient-to-b from-indigo-500">
-                      <p>YOUR NAME</p>
-                      <div className="mt-10">{formattedCardNumber(cardNumber ?? "")}</div>
-                      <div className="flex justify-between mt-3">
-                        <p>{cardExpiry}</p>
-                        <MasterCardIcon />
+                    isPaymentMethod && (
+                      <div className="p-6 text-base text-white rounded-md bg-purple bg-gradient-to-b from-indigo-500">
+                        <p>YOUR NAME</p>
+                        <div className="mt-10">{formattedCardNumber(cardNumber ?? "")}</div>
+                        <div className="flex justify-between mt-3">
+                          <p>{cardExpiry}</p>
+                          <MasterCardIcon />
+                        </div>
                       </div>
-                    </div>
+                    )
                   )}
                 </div>
               </div>

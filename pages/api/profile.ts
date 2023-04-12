@@ -16,12 +16,17 @@ type ResponseDateType = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseDateType>) {
+  const { userId, accessToken, newData } = req.body;
   try {
-    const { data } = await axios.get(`${process.env.BACKEND_API_BASEURL}/subscription/customer`, {
-      headers: {
-        Authorization: `Bearer ${req.body.token}`,
-      },
-    });
+    const { data } = await axios.put(
+      `${process.env.BACKEND_API_BASEURL}/user/${userId}`,
+      { data: newData },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     res.status(200).json({ ...data });
   } catch (error: any) {
     return res.status(500).json(error?.response?.data);

@@ -44,7 +44,7 @@ export default function Plan() {
           <div className="w-full h-full md:flex">
             <div className="w-full h-full py-10 overflow-auto transition-all duration-300 shadow-lg  dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
               <div className="w-full mt-8 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8">
-                <p className="px-4 mt-12 text-2xl text-center text-white 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12">
+                <p className="px-4 mt-12 text-2xl text-center 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12">
                   Lorem Ipsum is simply dummy text of the printing
                 </p>
                 <div className="flex items-center justify-center my-10">
@@ -59,7 +59,7 @@ export default function Plan() {
                       checked={isChecked}
                       onChange={handleChange}
                     />
-                    <div className="w-12 h-6 p-2 rounded-full dark:bg-blue-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-blue-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-blue-600 peer-checked:bg-blue-600"></div>
+                    <div className="w-12 h-6 p-2 rounded-full bg-blue-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-blue-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-blue-600 peer-checked:bg-blue-600"></div>
                   </label>
                   <p className={`ml-6 text-base font-medium ${isChecked ? "dark:text-white" : "text-slate-400"}`}>
                     Annual

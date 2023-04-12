@@ -2,7 +2,7 @@ import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id, token } = req.body;
+  const { token } = req.body;
   try {
     const { data } = await axios.get(`${process.env.BACKEND_API_BASEURL}/history/chat`, {
       headers: {

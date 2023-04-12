@@ -17,6 +17,7 @@ import {
   Bars3Icon,
   UserIcon,
   ArrowRightOnRectangleIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 
 import Accordion from "../../basic/Accordion";
@@ -85,6 +86,10 @@ const Sidebar = () => {
       <div className="hidden py-10 shadow-lg xl:py-20 md:w-24 xl:w-380 bg-primary md:flex">
         <div className="flex-col justify-between hidden w-full px-5 overflow-auto text-white xl:flex">
           <div className="mx-auto space-y-2 text-white text-md font-base">
+            <button onClick={() => push("/")} className="flex items-center gap-3 hover:text-white">
+              <HomeIcon className="w-6" />
+              Home
+            </button>
             <button onClick={() => window.location.reload()} className="flex items-center gap-3 hover:text-white">
               <DocumentPlusIcon className="w-6" />
               New PDF

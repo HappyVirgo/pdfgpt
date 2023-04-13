@@ -100,7 +100,9 @@ const Sidebar = () => {
         },
       });
       setFiles((prev) => {
-        const newFiles = prev.filter((item) => item.file || item.s3_url).map((item) => ({ ...item, active: false }));
+        const newFiles = prev
+          .filter((item) => (item.file || item.s3_url) && item.uid !== selected.uid)
+          .map((item) => ({ ...item, active: false }));
         newFiles.push({
           ...data,
           order: newFiles.length + 1,

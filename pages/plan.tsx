@@ -18,10 +18,14 @@ export default function Plan() {
 
   const getPlan = async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    const { data } = await axios.post("api/stripe/plan", {
-      token: token,
-    });
-    setPlans(data.data.plans);
+    try {
+      const { data } = await axios.post("api/stripe/plan", {
+        token: token,
+      });
+      setPlans(data.data.plans);
+    } catch (error) {
+      setPlans([]);
+    }
   };
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,7 +44,7 @@ const Sidebar = () => {
   } = useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { user, setUser, setTokens } = useContext(AuthContext);
+  const { user, setUser, setTokens, tokens } = useContext(AuthContext);
   const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -52,6 +52,22 @@ const Sidebar = () => {
   const toggleThemeHander = () => {
     toggleThemeHandler();
   };
+
+  const loadHistory = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      });
+      console.log("data: ", data);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+  useEffect(() => {
+    loadHistory();
+  }, []);
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {

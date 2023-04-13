@@ -40,42 +40,25 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
   isAnnual,
 }) => {
   const [loading, setLoading] = useState(false);
-  const { user, setUser, tokens } = useContext(AuthContext);
+  const { user, tokens } = useContext(AuthContext);
   const handlePay = async () => {
-    const token = tokens?.accessToken;
     setLoading(true);
-    if (user?.current_plan_id === id) {
-      try {
-        await axios.post("api/stripe/cancel-subscribe", {
-          body: {
-            plan_id: 1,
-            product_id: productId,
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/create-checkout-session`,
+        {
+          price_id: productId,
+          success_url: "http://localhost:3000/plan",
+          cancel_url: "http://localhost:3000/plan",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tokens?.accessToken}`,
           },
-          token: token,
-        });
-        if (user) {
-          setUser({ ...user, current_plan_id: 1 });
         }
-        toast("Subscription is canceled");
-      } catch (error: any) {
-        toast(error?.response?.data?.message ?? "Some thing went wrong");
-      }
-    } else {
-      try {
-        await axios.post("api/stripe/subscribe", {
-          body: {
-            plan_id: id,
-            product_id: productId,
-          },
-          token: token,
-        });
-        if (user) {
-          setUser({ ...user, current_plan_id: id });
-        }
-        toast("Subscription succeed");
-      } catch (error: any) {
-        toast(error?.response?.data?.message ?? "Some thing went wrong");
-      }
+      );
+    } catch (error: any) {
+      toast(error?.response?.data?.message ?? "Some thing went wrong");
     }
     setLoading(false);
   };

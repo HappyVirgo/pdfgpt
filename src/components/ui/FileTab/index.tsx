@@ -53,7 +53,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
     ]);
   };
   return (
-    <div className="flex w-full overflow-x-auto bg-primary items-center z-20 h-10 absolute top-0 left-0 text-white">
+    <div className="flex w-full overflow-x-auto bg-primary items-center z-20 h-10 absolute top-12 md:top-0 left-0 text-white">
       {files
         .sort((a, b) => a?.order - b?.order)
         .map((item, index) => (

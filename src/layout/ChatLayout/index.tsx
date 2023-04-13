@@ -301,7 +301,7 @@ const ChatLayout: React.FC = () => {
           } h-full dark:bg-bgRadialEnd  bg-lightText dark:bg-gradient-radial duration-300 transition-all`}
         >
           <div
-            className="flex w-full h-full px-4 pt-10 pb-20 overflow-x-hidden overflow-y-auto xl:pt-20"
+            className="flex w-full h-full px-4 pt-20 pb-20  md:pt-10 overflow-x-hidden overflow-y-auto xl:pt-20"
             ref={chatWindowRef}
           >
             {file?.file ? (

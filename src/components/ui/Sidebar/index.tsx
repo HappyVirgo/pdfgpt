@@ -264,7 +264,25 @@ const Sidebar = () => {
         <button onClick={() => setShowDrawer(true)}>
           <Bars3Icon className="w-6" />
         </button>
-        <button onClick={() => window.location.reload()}>New PDF</button>
+        <button
+          onClick={() => {
+            setShowPdf((prev) => !prev);
+          }}
+          disabled={isRecentView}
+          className="flex items-center gap-3 hover:text-white disabled:text-darkText disabled:cursor-not-allowed"
+        >
+          {!showPdf ? (
+            <>
+              <EyeIcon className="w-6" />
+              Show PDF
+            </>
+          ) : (
+            <>
+              <EyeSlashIcon className="w-6" />
+              Hide PDF
+            </>
+          )}
+        </button>
       </div>
       <Modal isOpen={showContactModal} setIsOpen={setShowContactModal} title="Contact Us">
         <div className="mt-5 space-y-2">

@@ -18,6 +18,7 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
   HomeIcon,
+  EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 
 import Accordion from "../../basic/Accordion";
@@ -31,14 +32,13 @@ import { useRouter } from "next/router";
 
 const Sidebar = () => {
   const {
-    file,
     isDarkTheme,
     toggleThemeHandler,
+    showPdf,
     setShowPdf,
     setShowSetting,
     recent,
     setRecent,
-    setFile,
     driveFiles,
     setDriveFiles,
   } = useContext(MainContext);
@@ -101,13 +101,22 @@ const Sidebar = () => {
             </button>
             <button
               onClick={() => {
-                setShowPdf(true);
+                setShowPdf((prev) => !prev);
               }}
-              disabled={isRecentView || !file}
+              disabled={isRecentView}
               className="flex items-center gap-3 hover:text-white disabled:text-darkText disabled:cursor-not-allowed"
             >
-              <EyeIcon className="w-6" />
-              Show PDF
+              {!showPdf ? (
+                <>
+                  <EyeIcon className="w-6" />
+                  Show PDF
+                </>
+              ) : (
+                <>
+                  <EyeSlashIcon className="w-6" />
+                  Hide PDF
+                </>
+              )}
             </button>
             <button className="flex items-center gap-3 hover:text-white" onClick={() => setShowSetting(true)}>
               <KeyIcon className="w-6" />
@@ -128,7 +137,6 @@ const Sidebar = () => {
                           className="py-0.5 cursor-pointer flex items-center"
                           onClick={() => {
                             setIsRecentView(true);
-                            setFile({ uid: Object.keys(item)[0], name: Object.values(item)[0] });
                           }}
                         >
                           <span className="flex-1 truncate whitespace-nowrap">{Object.values(item)[0]}</span>

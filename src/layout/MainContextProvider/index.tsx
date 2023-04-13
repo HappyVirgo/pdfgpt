@@ -10,6 +10,24 @@ type DriveFileType = {
   name: string;
 };
 
+export type MessageItem = {
+  type: "QUESTION" | "REPLY";
+  message: string;
+  references?: { id: number; content: string; page_num: number }[];
+};
+
+export type FileType = {
+  order: number;
+  name?: string;
+  uid?: string;
+  file?: File;
+  ip?: string;
+  s3_url?: string;
+  active: boolean;
+  total_pages?: number;
+  messages: MessageItem[];
+};
+
 type MainContextType = {
   isDarkTheme: Boolean;
   toggleThemeHandler: VoidFunction;
@@ -17,6 +35,8 @@ type MainContextType = {
   setShowPdf: React.Dispatch<SetStateAction<boolean>>;
   file?: File | { [key: string]: string } | undefined;
   setFile: React.Dispatch<SetStateAction<File | { [key: string]: string } | undefined>>;
+  files: FileType[];
+  setFiles: React.Dispatch<FileType[]>;
   showSetting: boolean;
   setShowSetting: React.Dispatch<SetStateAction<boolean>>;
   recent: { [key: string]: string }[];
@@ -34,6 +54,8 @@ const MainContextValue: MainContextType = {
   setShowPdf: () => {},
   file: undefined,
   setFile: () => {},
+  files: [],
+  setFiles: () => {},
   showSetting: false,
   setShowSetting: () => {},
   recent: [],
@@ -55,6 +77,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [showPdf, setShowPdf] = useState<boolean>(false);
   const [file, setFile] = useState<File | { [key: string]: string } | undefined>(undefined);
+  const [files, setFiles] = useState<FileType[]>([]);
   const [showSetting, setShowSetting] = useState(false);
   const [recent, setRecent] = useState<{ [key: string]: string }[]>([]);
   const [pageNum, setPageNum] = useState<number>(1);
@@ -125,6 +148,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         isDarkTheme,
         showPdf,
         file,
+        files,
         showSetting,
         recent,
         pageNum,
@@ -132,6 +156,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         setShowPdf,
         toggleThemeHandler,
         setFile,
+        setFiles,
         setShowSetting,
         setRecent,
         setPageNum,

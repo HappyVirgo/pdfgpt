@@ -1,17 +1,18 @@
 import React, { useCallback, useContext } from "react";
 import { useDropzone } from "react-dropzone";
-import * as uuid from "uuid";
 import UploadPattern from "../../../assets/svg/upload_pattern.svg";
 import UploadIcon from "../../../assets/svg/upload.svg";
-import { MainContext } from "../../../layout/MainContextProvider";
+import { FileType, MainContext } from "../../../layout/MainContextProvider";
 
 const MyDropzone = () => {
-  const { setFile, setShowPdf } = useContext(MainContext);
+  const { setShowPdf, setFiles } = useContext(MainContext);
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     // @ts-ignore
-    file.uid = uuid.v4();
-    setFile(file);
+    setFiles((prev: FileType[]) => [
+      ...prev.filter((item) => !item.active),
+      { ...prev.find((item) => item.active), file: file, name: file.name },
+    ]);
     setShowPdf(true);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ onDrop });

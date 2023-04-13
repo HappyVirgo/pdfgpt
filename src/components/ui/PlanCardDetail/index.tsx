@@ -57,6 +57,10 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({
           },
         }
       );
+      const redirectUrl = data?.session?.url;
+      if (redirectUrl) {
+        window.location?.replace(`${redirectUrl}`);
+      }
     } catch (error: any) {
       toast(error?.response?.data?.message ?? "Some thing went wrong");
     }

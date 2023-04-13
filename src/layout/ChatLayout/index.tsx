@@ -3,7 +3,7 @@ import axios from "axios";
 import * as uuid from "uuid";
 import { Document, Page, pdfjs } from "react-pdf";
 import { type TextItem } from "pdfjs-dist/types/src/display/api";
-import { ScaleLoader } from "react-spinners";
+import { CircleLoader, ScaleLoader } from "react-spinners";
 
 import Reply from "../../assets/svg/reply.svg";
 import FileTab from "../../components/ui/FileTab";
@@ -293,7 +293,7 @@ const ChatLayout: React.FC = () => {
 
   return (
     <div className="w-full h-full md:flex relative">
-      <FileTab />
+      <FileTab loading={loading} />
       {file && (
         <div
           className={`relative ${

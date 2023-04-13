@@ -3,7 +3,11 @@ import * as uuid from "uuid";
 import { FileType, MainContext } from "../../../layout/MainContextProvider";
 import { DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-const FileTab = () => {
+type FileTabProps = {
+  loading: boolean;
+};
+
+const FileTab: React.FC<FileTabProps> = ({ loading }) => {
   const { files, setFiles, setShowPdf } = useContext(MainContext);
   const addNewDocument = () => {
     if (files.length === 0 || files.at(-1)?.file) {
@@ -53,27 +57,30 @@ const FileTab = () => {
       {files
         .sort((a, b) => a?.order - b?.order)
         .map((item, index) => (
-          <a
+          <button
+            disabled={loading}
             key={index}
             onClick={() => activeDocument(item)}
-            className={`w-32 cursor-pointer h-full flex-none text-xs relative text-center pt-3 px-2 truncate whitespace-nowrap border-r border-bgRadialStart ${
+            className={`w-32 disabled:text-darkText disabled:cursor-not-allowed cursor-pointer h-full flex-none text-xs relative text-center pt-3 px-2 truncate whitespace-nowrap border-r border-bgRadialStart ${
               item.active ? "rounded-tr-lg bg-bgRadialEnd" : "bg-primary rounded-none"
             }`}
           >
             <span>{`${item.name}-${item.uid}`}</span>
-            <button
+            <a
               onClick={(e) => {
                 e.stopPropagation();
-                removeDocument(item);
+                if (!loading) {
+                  removeDocument(item);
+                }
               }}
               className="absolute right-0 top-0 p-1"
             >
               <XMarkIcon className="w-4 text-white" />
-            </button>
-          </a>
+            </a>
+          </button>
         ))}
       <button
-        disabled={!(files.length === 0 || files.at(-1)?.file)}
+        disabled={!(files.length === 0 || files.at(-1)?.file) || loading}
         className="px-2 disabled:text-darkText disabled:cursor-not-allowed"
         onClick={addNewDocument}
       >

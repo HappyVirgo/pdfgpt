@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Head from "next/head";
 
 import MainLayout from "../src/layout/MainLayout";
 import styles from "@/styles/Home.module.css";
 import PlanCardDetail from "../src/components/ui/PlanCardDetail";
 import axios from "axios";
-
-const planDescription = ["Free plan", "Ideal for medium-sized businesses", "Ideal for large businesses"];
+import { useRouter } from "next/router";
+import { AuthContext } from "../src/layout/AuthContextProvider";
+import { toast } from "react-toastify";
 
 export default function Plan() {
+  const router = useRouter();
+  const { tokens, user } = useContext(AuthContext);
   const [isChecked, setIsChecked] = useState(false);
   const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
 
@@ -17,10 +20,9 @@ export default function Plan() {
   };
 
   const getPlan = async () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     try {
       const { data } = await axios.post("api/stripe/plan", {
-        token: token,
+        token: tokens?.accessToken,
       });
       setPlans(data.data.plans);
     } catch (error) {
@@ -28,9 +30,33 @@ export default function Plan() {
     }
   };
 
+  const onSuccess = async () => {
+    if (router.query?.session_id && user) {
+      try {
+        const { data: res } = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/success`,
+          {
+            session_id: router.query?.session_id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${tokens?.accessToken}`,
+            },
+          }
+        );
+        console.log("res: ", res);
+      } catch (error: any) {
+        toast("Fetching checkout session info faild. " + error?.response?.data?.message);
+      }
+    }
+  };
+
   useEffect(() => {
-    getPlan();
-  }, []);
+    if (router.isReady) {
+      getPlan();
+      onSuccess();
+    }
+  }, [router.isReady]);
 
   return (
     <>
@@ -74,21 +100,7 @@ export default function Plan() {
                 {plans?.map((item: any, index: number) => (
                   <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 2xl:w-1/4">
                     <div className="flex justify-center">
-                      <PlanCardDetail
-                        id={item.id}
-                        productId={isChecked ? item.stripe_product_annual_id : item.stripe_product_id}
-                        isAnnual={isChecked}
-                        type={item.name as "Basic" | "Advanced" | "Ultimate"}
-                        name={planDescription[index]}
-                        pages={item.pages}
-                        mega={item.mega}
-                        pdf={item.pdf}
-                        question={item.question}
-                        users={item.users}
-                        size={item.size}
-                        price={item.price}
-                        connector={item.connector}
-                      />
+                      <PlanCardDetail data={item} isAnnual={isChecked} />
                     </div>
                   </div>
                 ))}

@@ -22,7 +22,10 @@ type ResponseDateType = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseDateType>) {
   const { token, google_token } = req.body;
   try {
-    const { data } = await axios.post(`${process.env.BACKEND_API_BASEURL}/auth/refresh-token`, { token, google_token });
+    const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/auth/refresh-token`, {
+      token,
+      google_token,
+    });
     return res.status(200).json(data);
   } catch (error: any) {
     return res.status(error?.response?.status).json(error.response.data);

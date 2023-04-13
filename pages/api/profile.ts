@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const { userId, accessToken, data } = req.body;
   try {
     const { data: response } = await axios.put(
-      `${process.env.BACKEND_API_BASEURL}/user/${userId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/user/${userId}`,
       { data },
       {
         headers: {

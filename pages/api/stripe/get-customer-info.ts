@@ -17,7 +17,7 @@ type ResponseDateType = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseDateType>) {
   try {
-    const { data } = await axios.get(`${process.env.BACKEND_API_BASEURL}/subscription/customer`, {
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/customer`, {
       headers: {
         Authorization: `Bearer ${req.body.token}`,
       },

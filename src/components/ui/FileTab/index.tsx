@@ -1,13 +1,17 @@
 import React, { useContext } from "react";
 import * as uuid from "uuid";
 import { FileType, MainContext } from "../../../layout/MainContextProvider";
-import { DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { CircleStackIcon, DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { AuthContext } from "../../../layout/AuthContextProvider";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 type FileTabProps = {
   loading: boolean;
 };
 
 const FileTab: React.FC<FileTabProps> = ({ loading }) => {
+  const { tokens } = useContext(AuthContext);
   const { files, setFiles, setShowPdf } = useContext(MainContext);
   const addNewDocument = () => {
     if (files.length === 0 || files.at(-1)?.file) {
@@ -52,6 +56,26 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
         .map((item, index) => ({ ...item, order: index + 1 })),
     ]);
   };
+
+  const saveHistory = async (selected: FileType) => {
+    try {
+      if (selected.messages.length) {
+        const formData = new FormData();
+        formData.append("name", `${selected.name}`);
+        formData.append("uid", `${selected.uid}`);
+        formData.append("messages", JSON.stringify(selected.messages));
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+          headers: {
+            Authorization: `Bearer ${tokens?.accessToken}`,
+          },
+        });
+        toast("History is saved");
+      }
+    } catch (error) {
+      toast("Saving is faild");
+    }
+  };
+
   return (
     <div className="flex w-full overflow-x-auto bg-primary items-center z-20 h-10 absolute top-12 md:top-0 left-0 text-white">
       {files
@@ -76,6 +100,17 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
               className="absolute right-0 top-0 p-1"
             >
               <XMarkIcon className="w-4 text-white" />
+            </a>
+            <a
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!loading) {
+                  saveHistory(item);
+                }
+              }}
+              className="absolute right-5 top-0 p-1"
+            >
+              <CircleStackIcon className="w-4 text-white" />
             </a>
           </button>
         ))}

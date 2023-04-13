@@ -5,7 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { data, token } = req.body;
   try {
     const { data: response } = await axios.post(
-      `${process.env.BACKEND_API_BASEURL}/subscription/customer`,
+      `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/customer`,
       { ...data },
       {
         headers: {

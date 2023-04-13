@@ -1,23 +1,26 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import axios from "axios";
 import * as uuid from "uuid";
+import axios from "axios";
 import { Document, Page, pdfjs } from "react-pdf";
-import { type TextItem } from "pdfjs-dist/types/src/display/api";
 import { ScaleLoader } from "react-spinners";
+import { XCircleIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
+import { type TextItem } from "pdfjs-dist/types/src/display/api";
 
-import Reply from "../../assets/svg/reply.svg";
 import FileTab from "../../components/ui/FileTab";
-import MyDropzone from "../../components/basic/Dropzone";
-import Modal from "../../components/basic/Modal";
 import Message from "../../components/ui/Message";
+import Modal from "../../components/basic/Modal";
+import MyDropzone from "../../components/basic/Dropzone";
+import Reply from "../../assets/svg/reply.svg";
+import { AuthContext } from "../AuthContextProvider";
 import { FileType, MainContext } from "../MainContextProvider";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import { XCircleIcon } from "@heroicons/react/24/outline";
 
 const ChatLayout: React.FC = () => {
+  const { tokens } = useContext(AuthContext);
   const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, setRecent, pageNum } =
     useContext(MainContext);
   const chatWindowRef = useRef<HTMLDivElement>(null);
@@ -87,7 +90,6 @@ const ChatLayout: React.FC = () => {
   }, [showSetting]);
 
   async function generateEmbedding(sentenceList: any[]) {
-    console.log("Embedding");
     let delay = 0;
     try {
       if (sentenceList[sentenceList.length - 1].pageNum > 1001) {
@@ -105,6 +107,25 @@ const ChatLayout: React.FC = () => {
         },
         data: { sentenceList },
       });
+
+      try {
+        const formData = new FormData();
+        if (file?.file) {
+          formData.append("file", file?.file);
+        }
+        formData.append("name", `${file?.name}`);
+        formData.append("uid", `${file?.uid}`);
+        formData.append("total_pages", `${file?.total_pages}`);
+        formData.append("messages", JSON.stringify(file?.messages));
+        const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+          headers: {
+            Authorization: `Bearer ${tokens?.accessToken}`,
+          },
+        });
+        toast("File upload is succed");
+      } catch (error) {
+        toast("File upload is faild");
+      }
 
       const { chunkList } = res.data;
       const chunkSize = chunkList.length > 80 ? 80 : Number(chunkList.length);

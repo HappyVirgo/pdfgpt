@@ -29,11 +29,12 @@ import { AuthContext } from "../../../layout/AuthContextProvider";
 import { MainContext } from "../../../layout/MainContextProvider";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 export type DocumentType = { id: number; name: string; ip: string; s3_link: string; total_pages: number; uid: string };
 
 const Sidebar = () => {
-  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, driveFiles, setDriveFiles } =
+  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, driveFiles, setDriveFiles, setFiles } =
     useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +47,7 @@ const Sidebar = () => {
     toggleThemeHandler();
   };
 
-  const loadHistory = async () => {
+  const loadHistories = async () => {
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
         headers: {
@@ -55,12 +56,12 @@ const Sidebar = () => {
       });
       setHistory(data.documents);
     } catch (error) {
-      console.log("error: ", error);
+      setHistory([]);
     }
   };
 
   useEffect(() => {
-    loadHistory();
+    loadHistories();
   }, []);
 
   const login = useGoogleLogin({
@@ -89,6 +90,26 @@ const Sidebar = () => {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
     push("/");
+  };
+
+  const loadHistory = async (selected: DocumentType) => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/${selected.id}`, {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      });
+      setFiles((prev) => {
+        const newFiles = prev.filter((item) => item.file || item.s3_url).map((item) => ({ ...item, active: false }));
+        newFiles.push({
+          ...data,
+          order: newFiles.length + 1,
+        });
+        return newFiles;
+      });
+    } catch (error: any) {
+      toast("Faild Fetching. " + error);
+    }
   };
 
   return (
@@ -144,7 +165,7 @@ const Sidebar = () => {
                         <button
                           key={index}
                           className="py-0.5 cursor-pointer w-full gap-1 flex items-center"
-                          onClick={() => {}}
+                          onClick={() => loadHistory(item)}
                         >
                           <div className="flex-none">
                             <DocumentTextIcon className="w-5" />

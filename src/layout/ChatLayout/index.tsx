@@ -65,6 +65,7 @@ const ChatLayout: React.FC = () => {
         setShowPdf(false);
       }
     }
+    console.log(file);
   }, [files]);
 
   useEffect(() => {
@@ -325,7 +326,7 @@ const ChatLayout: React.FC = () => {
             className="flex w-full h-full px-4 pt-20 pb-20  md:pt-10 overflow-x-hidden overflow-y-auto xl:pt-20"
             ref={chatWindowRef}
           >
-            {file?.file ? (
+            {file?.file || file?.s3_url ? (
               <div className="relative h-full mx-auto w-full max-w-1180">
                 <div className="pt-12 pb-40 space-y-8 md:pb-32 md:pt-0">
                   {!!file.messages.length &&
@@ -351,7 +352,7 @@ const ChatLayout: React.FC = () => {
                   type="text"
                   className="w-full bg-transparent outline-none ring-0 disabled:cursor-not-allowed"
                   value={question}
-                  disabled={!file.file || loading}
+                  disabled={(!file.file && !file.s3_url) || loading}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       onSend(question);
@@ -363,7 +364,7 @@ const ChatLayout: React.FC = () => {
                   <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />
                 ) : (
                   <button
-                    disabled={!file.file || loading}
+                    disabled={(!file.file && !file.s3_url) || loading}
                     onClick={() => {
                       onSend(question);
                     }}

@@ -117,7 +117,7 @@ const ChatLayout: React.FC = () => {
         formData.append("uid", `${file?.uid}`);
         formData.append("total_pages", `${file?.total_pages}`);
         formData.append("messages", JSON.stringify(file?.messages));
-        const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
           headers: {
             Authorization: `Bearer ${tokens?.accessToken}`,
           },

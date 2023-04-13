@@ -30,24 +30,17 @@ import { MainContext } from "../../../layout/MainContextProvider";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/router";
 
+export type DocumentType = { id: number; name: string; ip: string; s3_link: string; total_pages: number; uid: string };
+
 const Sidebar = () => {
-  const {
-    isDarkTheme,
-    toggleThemeHandler,
-    showPdf,
-    setShowPdf,
-    setShowSetting,
-    recent,
-    setRecent,
-    driveFiles,
-    setDriveFiles,
-  } = useContext(MainContext);
+  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, driveFiles, setDriveFiles } =
+    useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser, setTokens, tokens } = useContext(AuthContext);
-  const [isRecentView, setIsRecentView] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [history, setHistory] = useState<DocumentType[]>([]);
 
   const toggleThemeHander = () => {
     toggleThemeHandler();
@@ -60,11 +53,12 @@ const Sidebar = () => {
           Authorization: `Bearer ${tokens?.accessToken}`,
         },
       });
-      console.log("data: ", data);
+      setHistory(data.documents);
     } catch (error) {
       console.log("error: ", error);
     }
   };
+
   useEffect(() => {
     loadHistory();
   }, []);
@@ -119,7 +113,6 @@ const Sidebar = () => {
               onClick={() => {
                 setShowPdf((prev) => !prev);
               }}
-              disabled={isRecentView}
               className="flex items-center gap-3 hover:text-white disabled:text-darkText disabled:cursor-not-allowed"
             >
               {!showPdf ? (
@@ -146,48 +139,38 @@ const Sidebar = () => {
               <>
                 <Accordion title="Recent">
                   <div className="w-32 ml-6 text-sm">
-                    {recent.length > 0 &&
-                      recent.map((item, index) => (
-                        <div
+                    {history.length > 0 &&
+                      history.map((item, index) => (
+                        <button
                           key={index}
-                          className="py-0.5 cursor-pointer flex items-center"
-                          onClick={() => {
-                            setIsRecentView(true);
-                          }}
+                          className="py-0.5 cursor-pointer w-full gap-1 flex items-center"
+                          onClick={() => {}}
                         >
-                          <span className="flex-1 truncate whitespace-nowrap">{Object.values(item)[0]}</span>
-                          <button
+                          <div className="flex-none">
+                            <DocumentTextIcon className="w-5" />
+                          </div>
+                          <span className="flex-1 truncate whitespace-nowrap">{`${item?.name}-${item?.uid}`}</span>
+                          <a
                             className="flex-none"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setRecent((prev) => [
-                                ...prev.filter((rec) => Object.keys(item)[0] !== Object.keys(rec)[0]),
-                              ]);
-                              if (typeof window !== "undefined") {
-                                localStorage.setItem(
-                                  "files",
-                                  JSON.stringify([
-                                    ...recent.filter((rec) => Object.keys(item)[0] !== Object.keys(rec)[0]),
-                                  ])
-                                );
-                              }
                             }}
                           >
-                            <TrashIcon className="w-4" />
-                          </button>
-                        </div>
+                            <TrashIcon className="w-5" />
+                          </a>
+                        </button>
                       ))}
                   </div>
                 </Accordion>
                 <Accordion title="Google Drive">
                   <button className="w-32 ml-6 space-y-1 text-sm" onClick={() => {}}>
                     {driveFiles?.map((item) => (
-                      <button className="flex items-center justify-start w-full gap-1" key={item.id}>
+                      <a className="flex items-center justify-start w-full gap-1" key={item.id}>
                         <div className="flex-none">
-                          <DocumentTextIcon className="w-4" />
+                          <DocumentTextIcon className="w-5" />
                         </div>
                         <div className="flex-1 text-left truncate whitespace-nowrap">{item.name}</div>
-                      </button>
+                      </a>
                     ))}
                   </button>
                 </Accordion>
@@ -284,7 +267,6 @@ const Sidebar = () => {
           onClick={() => {
             setShowPdf((prev) => !prev);
           }}
-          disabled={isRecentView}
           className="flex items-center gap-3 hover:text-white disabled:text-darkText disabled:cursor-not-allowed"
         >
           {!showPdf ? (

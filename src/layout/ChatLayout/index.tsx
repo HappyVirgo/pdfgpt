@@ -27,9 +27,7 @@ const ChatLayout: React.FC = () => {
 
   const [alertMessage, setAlertMessage] = useState("");
   const [botmsg, setbotmsg] = useState(false);
-  const [cb, continueButton] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [numPages, setNumPages] = useState();
   const [question, setQuestion] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [file, setFile] = useState<FileType>();
@@ -42,19 +40,7 @@ const ChatLayout: React.FC = () => {
   useEffect(() => {
     if (!files.length) {
       const uid = uuid.v4();
-      setFiles([
-        {
-          order: 1,
-          name: "New",
-          uid: uid,
-          file: undefined,
-          ip: "",
-          s3_url: "",
-          active: true,
-          messages: [],
-        },
-      ]);
-      setFile({
+      const newObj = {
         order: 1,
         name: "New",
         uid: uid,
@@ -63,9 +49,18 @@ const ChatLayout: React.FC = () => {
         s3_url: "",
         active: true,
         messages: [],
-      });
+        isEmbedded: false,
+      };
+      setFiles([newObj]);
+      setFile(newObj);
     } else {
-      setFile(files.find((item) => item.active));
+      const actived = files.find((item) => item.active);
+      setFile(actived);
+      if (actived?.file) {
+        setShowPdf(true);
+      } else {
+        setShowPdf(false);
+      }
     }
   }, [files]);
 
@@ -92,6 +87,7 @@ const ChatLayout: React.FC = () => {
   }, [showSetting]);
 
   async function generateEmbedding(sentenceList: any[]) {
+    console.log("Embedding");
     let delay = 0;
     try {
       if (sentenceList[sentenceList.length - 1].pageNum > 1001) {
@@ -165,11 +161,28 @@ const ChatLayout: React.FC = () => {
     sentenceRef.current = allSentenceList.filter((item) => {
       return item.sentence;
     });
-    setNumPages(numPages);
-    continueButton(false);
+
+    setFiles((prev: FileType[]) => {
+      const newFiles = prev;
+      const index = prev.findIndex((item) => item.active);
+      if (index > -1) {
+        newFiles[index].total_pages = numPages;
+      }
+      return newFiles;
+    });
+
     setShowPdf(true);
-    if (cb && typeof window !== "undefined" && JSON.parse(localStorage.getItem("settings") as string)?.apiKey) {
+    const apiKey = typeof window !== "undefined" && JSON.parse(localStorage.getItem("settings") as string)?.apiKey;
+    if (!file?.isEmbedded && apiKey) {
       generateEmbedding(sentenceRef.current as string[]);
+      setFiles((prev: FileType[]) => {
+        const newFiles = prev;
+        const index = prev.findIndex((item) => item.active);
+        if (index > -1) {
+          newFiles[index].isEmbedded = true;
+        }
+        return newFiles;
+      });
     }
   }
 
@@ -194,14 +207,12 @@ const ChatLayout: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        // @ts-ignore
         data: {
           query: value,
           apiKey: settings.current?.apiKey,
           matches: 5,
           ip: typeof window !== "undefined" ? localStorage.getItem("ip") : "",
-          // @ts-ignore
-          fileName: `${file.uid}-${file.name}`,
+          fileName: `${file?.uid}-${file?.name}`,
         },
       });
 
@@ -232,25 +243,21 @@ const ChatLayout: React.FC = () => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        // @ts-ignore
         setFiles((prev: FileType[]) => {
-          const actived = prev.find((item) => item.active);
-          if (!actived) return prev;
-          return [
-            ...prev.filter((item) => !item.active),
-            {
-              ...actived,
-              messages: [
-                ...actived.messages.slice(0, -1),
-                {
-                  ...actived.messages.at(-1),
-                  type: "REPLY",
-                  message: actived.messages.at(-1)?.message + chunkValue,
-                  references: embedRes.data,
-                },
-              ],
-            },
-          ];
+          const index = prev.findIndex((item) => item.active);
+          const newFiles = prev;
+          if (index > -1) {
+            newFiles[index].messages = [
+              ...prev[index].messages.slice(0, -1),
+              {
+                ...prev[index].messages.at(-1),
+                type: "REPLY",
+                message: prev[index].messages.at(-1)?.message + chunkValue,
+                references: embedRes.data,
+              },
+            ];
+          }
+          return newFiles;
         });
         requestAnimationFrame(() => scrollToBottom());
       }
@@ -267,17 +274,17 @@ const ChatLayout: React.FC = () => {
     if (!settings.current?.apiKey) {
       return;
     }
-    // @ts-ignore
     setFiles((prev: FileType[]) => {
-      const actived = prev.find((item) => item.active);
-      if (!actived) return prev;
-      return [
-        ...prev.filter((item) => !item.active),
-        {
-          ...actived,
-          messages: [...actived.messages, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }],
-        },
-      ];
+      const index = prev.findIndex((item) => item.active);
+      const newFiles = prev;
+      if (index > -1) {
+        newFiles[index].messages = [
+          ...prev[index].messages,
+          { type: "QUESTION", message: value.trim() },
+          { type: "REPLY", message: "" },
+        ];
+      }
+      return newFiles;
     });
 
     scrollToBottom();
@@ -373,7 +380,7 @@ const ChatLayout: React.FC = () => {
                 console.log("Error: ", error);
               }}
             >
-              {Array.from(new Array(numPages), (_el, index) => (
+              {Array.from(new Array(file.total_pages), (_el, index) => (
                 <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} />
               ))}
             </Document>

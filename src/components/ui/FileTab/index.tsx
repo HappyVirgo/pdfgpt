@@ -6,11 +6,9 @@ import { DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 const FileTab = () => {
   const { files, setFiles, setShowPdf } = useContext(MainContext);
   const addNewDocument = () => {
-    // @ts-ignore
-    setFiles((prev: FileType[]) =>
-      [
-        ...prev.filter((item: FileType) => !item.active),
-        { ...prev.find((item: FileType) => item.active), active: false },
+    if (files.length === 0 || files.at(-1)?.file) {
+      setFiles((prev: FileType[]) => [
+        ...prev.map((item: FileType) => ({ ...item, active: false })),
         {
           order: prev.length + 1,
           name: "New",
@@ -20,27 +18,29 @@ const FileTab = () => {
           s3_url: "",
           active: true,
           messages: [],
+          isEmbedded: false,
         },
-      ].filter((item) => item.order)
-    );
-    setShowPdf(false);
+      ]);
+      setShowPdf(false);
+    }
   };
 
   const activeDocument = (selected: FileType) => {
     if (!selected.active) {
-      // @ts-ignore
-      setFiles((prev: FileType[]) =>
-        [
-          ...prev.filter((item: FileType) => !item.active && item.uid !== selected.uid),
-          { ...prev.find((item: FileType) => item.active), active: false },
-          { ...prev.find((item: FileType) => item.uid === selected.uid), active: true },
-        ].filter((item) => item.order)
-      );
+      setFiles((prev: FileType[]) => {
+        const newFiles = prev.map((item: FileType) => ({ ...item, active: false }));
+        const activeIndex = newFiles.findIndex((item: FileType) => item.uid === selected.uid);
+
+        if (activeIndex > -1) {
+          newFiles[activeIndex].active = true;
+        }
+
+        return newFiles;
+      });
     }
   };
 
   const removeDocument = (selected: FileType) => {
-    // @ts-ignore
     setFiles((prev: FileType[]) => [
       ...prev
         .filter((item: FileType) => item.uid !== selected.uid)
@@ -72,7 +72,11 @@ const FileTab = () => {
             </button>
           </a>
         ))}
-      <button className="px-2" onClick={addNewDocument}>
+      <button
+        disabled={!(files.length === 0 || files.at(-1)?.file)}
+        className="px-2 disabled:text-darkText disabled:cursor-not-allowed"
+        onClick={addNewDocument}
+      >
         <DocumentPlusIcon className="w-5" />
       </button>
     </div>

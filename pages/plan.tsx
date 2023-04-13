@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 export default function Plan() {
   const router = useRouter();
-  const { tokens, user } = useContext(AuthContext);
+  const { tokens, user, setUser } = useContext(AuthContext);
   const [isChecked, setIsChecked] = useState(false);
   const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
 
@@ -44,7 +44,7 @@ export default function Plan() {
             },
           }
         );
-        console.log("res: ", res);
+        setUser(res.user);
       } catch (error: any) {
         toast("Fetching checkout session info faild. " + error?.response?.data?.message);
       }

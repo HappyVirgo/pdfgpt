@@ -15,29 +15,46 @@ type PlanCardDetailProps = {
 
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
   const [loading, setLoading] = useState(false);
-  const { user, tokens } = useContext(AuthContext);
+  const { user, tokens, setUser } = useContext(AuthContext);
   const handlePay = async () => {
     setLoading(true);
-    try {
-      const { data: res } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/create-checkout-session`,
-        {
-          price_id: isAnnual ? data.stripe_product_annual_id : data.stripe_product_id,
-          success_url: "http://localhost:3000/plan",
-          cancel_url: "http://localhost:3000/plan",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${tokens?.accessToken}`,
-          },
-        }
-      );
-      const redirectUrl = res?.session?.url;
-      if (redirectUrl) {
-        window.location?.replace(`${redirectUrl}`);
+    if (user?.current_plan_id === data.id) {
+      try {
+        const { data: res } = await axios.delete(
+          `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/subscribe`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokens?.accessToken}`,
+            },
+          }
+        );
+        setUser(res.user);
+      } catch (error: any) {
+        toast(error?.response?.data?.message ?? "Some thing went wrong");
       }
-    } catch (error: any) {
-      toast(error?.response?.data?.message ?? "Some thing went wrong");
+    } else {
+      try {
+        const { data: res } = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/create-checkout-session`,
+          {
+            price_id: isAnnual ? data.stripe_product_annual_id : data.stripe_product_id,
+            plan_id: data.id,
+            success_url: "http://localhost:3000/plan",
+            cancel_url: "http://localhost:3000/plan",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${tokens?.accessToken}`,
+            },
+          }
+        );
+        const redirectUrl = res?.session?.url;
+        if (redirectUrl) {
+          window.location?.replace(`${redirectUrl}`);
+        }
+      } catch (error: any) {
+        toast(error?.response?.data?.message ?? "Some thing went wrong");
+      }
     }
     setLoading(false);
   };

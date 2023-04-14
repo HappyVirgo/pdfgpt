@@ -60,12 +60,8 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
   };
 
   return (
-    <div
-      className={`rounded-md w-full px-4 pt-4 pb-10 mb-2 xl:max-w-[320px] lg:max-w-[320px] max-w-[auto] ${
-        data.name === "Ultimate" ? "bg-white relative text-black" : "bg-darkPurple text-white"
-      }`}
-    >
-      <p className="font-medium text-lg mt-1 mb-3 flex justify-center items-center">
+    <div className={`rounded-md w-full px-4 pt-4 pb-10 mb-2 max-w-xs bg-white relative text-black`}>
+      <p className="flex items-center justify-center mt-1 mb-3 text-lg font-medium">
         {data.name !== "Basic" && (data.name === "Advanced" ? <Lightning1 /> : <Lightning2 />)}
         <span className={data.name !== "Basic" ? "ml-2" : ""}>{data.name}</span>
       </p>
@@ -76,7 +72,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
       )}
       {data.name !== "Basic" && (
         <div>
-          <div className="font-medium text-3xl mt-8 pl-6 flex justify-center items-center">
+          <div className="flex items-center justify-center pl-6 mt-8 text-3xl font-medium">
             ${isAnnual ? data.price * 10 : data.price}
             <hr className={`w-0.5 h-6 mx-6 ${data.name === "Ultimate" ? "bg-black" : "bg-white"}`} />
             <span className="text-xl font-normal">{isAnnual ? "Year" : "Month"}</span>

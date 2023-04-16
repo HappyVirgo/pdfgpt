@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import * as uuid from "uuid";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu } from "@headlessui/react";
@@ -26,7 +27,7 @@ import Drawer from "../../basic/Drawer";
 import GoogleIcon from "../../../assets/svg/google.svg";
 import Modal from "../../basic/Modal";
 import { AuthContext } from "../../../layout/AuthContextProvider";
-import { MainContext } from "../../../layout/MainContextProvider";
+import { FileType, MainContext } from "../../../layout/MainContextProvider";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -34,8 +35,17 @@ import { toast } from "react-toastify";
 export type DocumentType = { id: number; name: string; ip: string; s3_link: string; total_pages: number; uid: string };
 
 const Sidebar = () => {
-  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, driveFiles, setDriveFiles, setFiles } =
-    useContext(MainContext);
+  const {
+    isDarkTheme,
+    toggleThemeHandler,
+    showPdf,
+    setShowPdf,
+    setShowSetting,
+    driveFiles,
+    setDriveFiles,
+    setFiles,
+    files,
+  } = useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser, setTokens, tokens } = useContext(AuthContext);
@@ -114,6 +124,26 @@ const Sidebar = () => {
     }
   };
 
+  const addNewDocument = () => {
+    if (files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) {
+      setFiles((prev: FileType[]) => [
+        ...prev.map((item: FileType) => ({ ...item, active: false })),
+        {
+          order: prev.length + 1,
+          name: "New",
+          uid: uuid.v4(),
+          file: undefined,
+          ip: "",
+          s3_url: "",
+          active: true,
+          messages: [],
+          isEmbedded: false,
+        },
+      ]);
+      setShowPdf(false);
+    }
+  };
+
   return (
     <Fragment>
       <div className="hidden py-10 shadow-lg xl:py-20 md:w-24 xl:w-380 bg-primary md:flex">
@@ -123,12 +153,7 @@ const Sidebar = () => {
               <HomeIcon className="w-6" />
               Home
             </button>
-            <button
-              onClick={() => {
-                // window.location.reload()
-              }}
-              className="flex items-center gap-3 hover:text-white"
-            >
+            <button onClick={addNewDocument} className="flex items-center gap-3 hover:text-white">
               <DocumentPlusIcon className="w-6" />
               New PDF
             </button>

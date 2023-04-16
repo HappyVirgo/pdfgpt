@@ -14,7 +14,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
   const { tokens } = useContext(AuthContext);
   const { files, setFiles, setShowPdf } = useContext(MainContext);
   const addNewDocument = () => {
-    if (files.length === 0 || files.at(-1)?.file) {
+    if (files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) {
       setFiles((prev: FileType[]) => [
         ...prev.map((item: FileType) => ({ ...item, active: false })),
         {
@@ -77,7 +77,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
   };
 
   return (
-    <div className="flex w-full overflow-x-auto bg-primary items-center z-20 h-10 absolute top-12 md:top-0 left-0 text-white">
+    <div className="absolute left-0 z-20 flex items-center w-full h-10 overflow-x-auto text-white bg-primary top-12 md:top-0">
       {files
         .sort((a, b) => a?.order - b?.order)
         .map((item, index) => (
@@ -97,7 +97,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
                   removeDocument(item);
                 }
               }}
-              className="absolute right-0 top-0 p-1"
+              className="absolute top-0 right-0 p-1"
             >
               <XMarkIcon className="w-4 text-white" />
             </a>
@@ -108,14 +108,14 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
                   saveHistory(item);
                 }
               }}
-              className="absolute right-5 top-0 p-1"
+              className="absolute top-0 p-1 right-5"
             >
               <CircleStackIcon className="w-4 text-white" />
             </a>
           </button>
         ))}
       <button
-        disabled={!(files.length === 0 || files.at(-1)?.file) || loading}
+        // disabled={!(files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) || loading}
         className="px-2 disabled:text-darkText disabled:cursor-not-allowed"
         onClick={addNewDocument}
       >

@@ -210,7 +210,7 @@ const Sidebar = () => {
                       ))}
                   </div>
                 </Accordion>
-                <Accordion title="Google Drive">
+                {/* <Accordion title="Google Drive">
                   <button className="w-32 ml-6 space-y-1 text-sm" onClick={() => {}}>
                     {driveFiles?.map((item) => (
                       <a className="flex items-center justify-start w-full gap-1" key={item.id}>
@@ -221,7 +221,7 @@ const Sidebar = () => {
                       </a>
                     ))}
                   </button>
-                </Accordion>
+                </Accordion> */}
               </>
             )}
           </div>

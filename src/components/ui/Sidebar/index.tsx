@@ -35,17 +35,8 @@ import { toast } from "react-toastify";
 export type DocumentType = { id: number; name: string; ip: string; s3_link: string; total_pages: number; uid: string };
 
 const Sidebar = () => {
-  const {
-    isDarkTheme,
-    toggleThemeHandler,
-    showPdf,
-    setShowPdf,
-    setShowSetting,
-    driveFiles,
-    setDriveFiles,
-    setFiles,
-    files,
-  } = useContext(MainContext);
+  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, setDriveFiles, setFiles, files } =
+    useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser, setTokens, tokens } = useContext(AuthContext);

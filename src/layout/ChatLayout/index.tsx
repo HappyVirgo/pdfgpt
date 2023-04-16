@@ -101,7 +101,7 @@ const ChatLayout: React.FC = () => {
       let resp = await fetch("https://jsonip.com", { mode: "cors" });
       const { ip } = await resp.json();
       if (typeof window !== "undefined") localStorage.setItem("ip", ip.split(",")[0]);
-      const res = await axios("/api/chat/split-chunks", {
+      const res = await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/split-chunks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const ChatLayout: React.FC = () => {
       for (let i = 0; i < chunkList.length; i += chunkSize) {
         const chunk = chunkList.slice(i, i + chunkSize);
 
-        await axios("/api/chat/embedding", {
+        await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/embedding`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -224,7 +224,7 @@ const ChatLayout: React.FC = () => {
     }
     try {
       setLoading(true);
-      const embedRes = await axios("/api/chat/search-embed", {
+      const embedRes = await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-embed`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -241,7 +241,7 @@ const ChatLayout: React.FC = () => {
       const promptData = embedRes.data?.map((d: any) => d.content).join("\n\n");
       const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
 
-      const answerResponse = await fetch("/api/chat/search-answer", {
+      const answerResponse = await fetch(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-answer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -314,7 +314,7 @@ const ChatLayout: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full md:flex relative">
+    <div className="relative w-full h-full md:flex">
       <FileTab loading={loading} />
       {file && (
         <div
@@ -323,11 +323,11 @@ const ChatLayout: React.FC = () => {
           } h-full dark:bg-bgRadialEnd  bg-lightText dark:bg-gradient-radial duration-300 transition-all`}
         >
           <div
-            className="flex w-full h-full px-4 pt-20 pb-20  md:pt-10 overflow-x-hidden overflow-y-auto xl:pt-20"
+            className="flex w-full h-full px-4 pt-20 pb-20 overflow-x-hidden overflow-y-auto md:pt-10 xl:pt-20"
             ref={chatWindowRef}
           >
             {file?.file || file?.s3_url ? (
-              <div className="relative h-full mx-auto w-full max-w-1180">
+              <div className="relative w-full h-full mx-auto max-w-1180">
                 <div className="pt-12 pb-40 space-y-8 md:pb-32 md:pt-0">
                   {!!file.messages.length &&
                     file.messages.map((message, index) => (

@@ -60,7 +60,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
   };
 
   return (
-    <div className={`rounded-md w-full px-4 pt-4 pb-10 mb-2 max-w-xs bg-white relative text-black`}>
+    <div className="relative w-full max-w-xs px-4 pt-4 pb-10 mb-2 text-black bg-white rounded-md shadow-md">
       <p className="flex items-center justify-center mt-1 mb-3 text-lg font-medium">
         {data.name !== "Basic" && (data.name === "Advanced" ? <Lightning1 /> : <Lightning2 />)}
         <span className={data.name !== "Basic" ? "ml-2" : ""}>{data.name}</span>

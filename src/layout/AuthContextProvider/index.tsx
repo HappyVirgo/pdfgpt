@@ -1,6 +1,6 @@
 import React, { createContext, useState } from "react";
 
-type UserType = {
+export type UserType = {
   email: string;
   family_name?: string;
   given_name?: string;
@@ -10,6 +10,18 @@ type UserType = {
   picture: string;
   verified_email?: boolean;
   current_plan_id?: number;
+  Plan: {
+    id: number;
+    name: string;
+    pages: number;
+    pdf: number;
+    price: number;
+    query: number;
+    size: number;
+    users: number;
+    stripe_product_annual_id?: string
+    stripe_product_id?: string;
+  };
 };
 
 type TokenType = {
@@ -40,6 +52,7 @@ interface AuthContextProviderProps {
 
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserType | null>(null);
+  console.log('user: ', user);
   const [tokens, setTokens] = useState<TokenType | null>(null);
   return <AuthContext.Provider value={{ user, setUser, tokens, setTokens }}>{children}</AuthContext.Provider>;
 };

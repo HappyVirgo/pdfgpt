@@ -10,7 +10,7 @@ type DriveFileType = {
   name: string;
 };
 
-type DocumentType = {
+export type DocumentType = {
   id: number;
   ip: string;
   name: string;

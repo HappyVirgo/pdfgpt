@@ -60,7 +60,9 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
           .sort((a, b) => a.order - b.order)
           .map((item, index) => ({ ...item, order: index + 1 })),
       ];
-      newFiles[newFiles.length - 1].active = true;
+      if (newFiles.length > 0) {
+        newFiles[newFiles.length - 1].active = true;
+      }
       return newFiles;
     });
   };

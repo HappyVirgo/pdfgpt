@@ -18,6 +18,7 @@ import { FileType, MainContext } from "../MainContextProvider";
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
 import "react-pdf/dist/esm/Page/TextLayer.css";
+import { MessageItem } from "../MainContextProvider";
 
 const ChatLayout: React.FC = () => {
   const { tokens, user } = useContext(AuthContext);
@@ -34,6 +35,7 @@ const ChatLayout: React.FC = () => {
   const [question, setQuestion] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [file, setFile] = useState<FileType>();
+  const [messages, setMessages] = useState<MessageItem[]>([]);
 
   function scrollToPage(num: number) {
     // @ts-ignore
@@ -59,6 +61,7 @@ const ChatLayout: React.FC = () => {
     } else {
       const actived = files.find((item) => item.active);
       setFile(actived);
+      setMessages(actived?.messages ?? []);
       if (actived?.file) {
         setShowPdf(true);
       } else {
@@ -259,6 +262,15 @@ const ChatLayout: React.FC = () => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          {
+            ...prev.at(-1),
+            type: "REPLY",
+            message: prev.at(-1)?.message + chunkValue,
+            references: embedRes.data,
+          },
+        ]);
         setFiles((prev: FileType[]) => {
           const index = prev.findIndex((item) => item.active);
           const newFiles = prev;
@@ -290,6 +302,7 @@ const ChatLayout: React.FC = () => {
     if (!settings.current?.apiKey) {
       return;
     }
+    setMessages((prev) => [...prev, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }]);
     setFiles((prev: FileType[]) => {
       const index = prev.findIndex((item) => item.active);
       const newFiles = prev;
@@ -323,8 +336,8 @@ const ChatLayout: React.FC = () => {
             {file?.file || file?.s3_url ? (
               <div className="relative w-full h-full mx-auto max-w-1180">
                 <div className="pt-12 pb-40 space-y-8 md:pb-32 md:pt-0">
-                  {!!file.messages.length &&
-                    file.messages.map((message, index) => (
+                  {!!messages.length &&
+                    messages.map((message, index) => (
                       <Message
                         key={index}
                         type={message?.type === "REPLY" ? "FROM_CHATGPT" : "FROM_ME"}

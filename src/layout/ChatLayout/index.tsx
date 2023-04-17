@@ -22,8 +22,7 @@ import { MessageItem } from "../MainContextProvider";
 
 const ChatLayout: React.FC = () => {
   const { tokens, user } = useContext(AuthContext);
-  const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, setRecent, pageNum } =
-    useContext(MainContext);
+  const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, pageNum } = useContext(MainContext);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<any>();
   const sentenceRef = useRef<string[]>();

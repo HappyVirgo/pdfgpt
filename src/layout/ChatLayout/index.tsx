@@ -20,7 +20,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
 const ChatLayout: React.FC = () => {
-  const { tokens } = useContext(AuthContext);
+  const { tokens, user } = useContext(AuthContext);
   const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, setRecent, pageNum } =
     useContext(MainContext);
   const chatWindowRef = useRef<HTMLDivElement>(null);
@@ -92,8 +92,8 @@ const ChatLayout: React.FC = () => {
   async function generateEmbedding(sentenceList: any[]) {
     let delay = 0;
     try {
-      if (sentenceList[sentenceList.length - 1].pageNum > 1001) {
-        toast("Can't be processed, pdf has ore than 1000 pages");
+      if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 0)) {
+        toast(`Can't be processed, pdf has ore than ${user?.Plan.pages ?? 0} pages`);
       }
       setLoading(true);
       let resp = await fetch("https://jsonip.com", { mode: "cors" });
@@ -106,7 +106,6 @@ const ChatLayout: React.FC = () => {
         },
         data: { sentenceList },
       });
-
       try {
         const formData = new FormData();
         if (file?.file) {

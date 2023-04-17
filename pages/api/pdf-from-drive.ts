@@ -28,7 +28,6 @@ function render_page(pageData: any) {
       lastY,
       text = "";
     for (let item of textContent.items) {
-      // console.log(item)
       if (lastItem) {
         lastX = lastItem.transform[4];
         lastY = lastItem.transform[5];

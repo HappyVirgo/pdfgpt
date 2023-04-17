@@ -65,7 +65,6 @@ const ChatLayout: React.FC = () => {
         setShowPdf(false);
       }
     }
-    console.log(file);
   }, [files]);
 
   useEffect(() => {
@@ -94,8 +93,7 @@ const ChatLayout: React.FC = () => {
     let delay = 0;
     try {
       if (sentenceList[sentenceList.length - 1].pageNum > 1001) {
-        alert("Can't be processed, pdf has ore than 1000 pages");
-        delay = 2000;
+        toast("Can't be processed, pdf has ore than 1000 pages");
       }
       setLoading(true);
       let resp = await fetch("https://jsonip.com", { mode: "cors" });
@@ -161,10 +159,7 @@ const ChatLayout: React.FC = () => {
       if (typeof window !== "undefined") localStorage.setItem("files", JSON.stringify(files));
       setLoading(false);
     } catch (error) {
-      setAlertMessage("You have reached you api limits, Try after sometime.");
-      await new Promise((res) => setTimeout(res, 3000));
-      setShowAlert(true);
-      window.location.reload();
+      toast("You have reached you api limits, Try after sometime.");
       return;
     }
   }
@@ -398,9 +393,7 @@ const ChatLayout: React.FC = () => {
               ref={pdfRef}
               file={file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={(error) => {
-                console.log("Error: ", error);
-              }}
+              onLoadError={(error) => {}}
             >
               {Array.from(new Array(file.total_pages), (_el, index) => (
                 <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} />

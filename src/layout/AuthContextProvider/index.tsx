@@ -40,6 +40,7 @@ interface AuthContextProviderProps {
 
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserType | null>(null);
+  console.log("user: ", user);
   const [tokens, setTokens] = useState<TokenType | null>(null);
   return <AuthContext.Provider value={{ user, setUser, tokens, setTokens }}>{children}</AuthContext.Provider>;
 };

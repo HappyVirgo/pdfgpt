@@ -121,11 +121,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
             </a>
           </button>
         ))}
-      <button
-        // disabled={!(files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) || loading}
-        className="px-2 disabled:text-darkText disabled:cursor-not-allowed"
-        onClick={addNewDocument}
-      >
+      <button className="px-2 disabled:text-darkText disabled:cursor-not-allowed" onClick={addNewDocument}>
         <DocumentPlusIcon className="w-5" />
       </button>
       <Modal isOpen={shwoPopUp} setIsOpen={setShowPopUp} title="You have unsaved history">

@@ -110,25 +110,26 @@ const ChatLayout: React.FC = () => {
         },
         data: { sentenceList },
       });
-      try {
-        const formData = new FormData();
-        if (file?.file) {
-          formData.append("file", file?.file);
+      if (user) {
+        try {
+          const formData = new FormData();
+          if (file?.file) {
+            formData.append("file", file?.file);
+          }
+          formData.append("name", `${file?.name}`);
+          formData.append("uid", `${file?.uid}`);
+          formData.append("total_pages", `${file?.total_pages}`);
+          formData.append("messages", JSON.stringify(file?.messages));
+          await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+            headers: {
+              Authorization: `Bearer ${tokens?.accessToken}`,
+            },
+          });
+          toast("File upload is succed");
+        } catch (error) {
+          toast("File upload is faild");
         }
-        formData.append("name", `${file?.name}`);
-        formData.append("uid", `${file?.uid}`);
-        formData.append("total_pages", `${file?.total_pages}`);
-        formData.append("messages", JSON.stringify(file?.messages));
-        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
-          headers: {
-            Authorization: `Bearer ${tokens?.accessToken}`,
-          },
-        });
-        toast("File upload is succed");
-      } catch (error) {
-        toast("File upload is faild");
       }
-
       const { chunkList } = res.data;
       const chunkSize = chunkList.length > 80 ? 80 : Number(chunkList.length);
 
@@ -153,13 +154,6 @@ const ChatLayout: React.FC = () => {
       setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
       setbotmsg(true);
       setShowAlert(true);
-      let files: { [key: string]: string }[] =
-        typeof window !== "undefined" ? JSON.parse(localStorage.getItem("files") ?? "[]") : [];
-      // @ts-ignore
-      files.push({ [file.uid]: file.name });
-      // @ts-ignore
-      setRecent((prev) => [...prev, { [file.uid as string]: file.name }]);
-      if (typeof window !== "undefined") localStorage.setItem("files", JSON.stringify(files));
       setLoading(false);
     } catch (error) {
       toast("You have reached you api limits, Try after sometime.");

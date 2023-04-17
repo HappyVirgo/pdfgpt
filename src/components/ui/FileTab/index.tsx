@@ -62,19 +62,22 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
   };
 
   const saveHistory = async (selected: FileType) => {
+    if (!tokens) {
+      toast("You should login or upgrade plan to save this history");
+      return;
+    }
+
     try {
-      if (selected.messages.length) {
-        const formData = new FormData();
-        formData.append("name", `${selected.name}`);
-        formData.append("uid", `${selected.uid}`);
-        formData.append("messages", JSON.stringify(selected.messages));
-        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
-          headers: {
-            Authorization: `Bearer ${tokens?.accessToken}`,
-          },
-        });
-        toast("History is saved");
-      }
+      const formData = new FormData();
+      formData.append("name", `${selected.name}`);
+      formData.append("uid", `${selected.uid}`);
+      formData.append("messages", JSON.stringify(selected.messages));
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      });
+      toast("History is saved");
     } catch (error) {
       toast("Saving is faild");
     }

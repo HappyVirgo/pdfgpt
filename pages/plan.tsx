@@ -8,11 +8,13 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { AuthContext } from "../src/layout/AuthContextProvider";
 import { toast } from "react-toastify";
+import { BeatLoader } from "react-spinners";
 
 export default function Plan() {
   const router = useRouter();
   const { tokens, user, setUser } = useContext(AuthContext);
   const [isChecked, setIsChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
 
   const handleChange = () => {
@@ -20,6 +22,7 @@ export default function Plan() {
   };
 
   const getPlan = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.post("api/stripe/plan", {
         token: tokens?.accessToken,
@@ -28,6 +31,7 @@ export default function Plan() {
     } catch (error) {
       setPlans([]);
     }
+    setLoading(false);
   };
 
   const onSuccess = async () => {
@@ -96,15 +100,21 @@ export default function Plan() {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-4 px-10">
-                {plans?.map((item: any, index: number) => (
-                  <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 2xl:w-1/4">
-                    <div className="flex justify-center">
-                      <PlanCardDetail data={item} isAnnual={isChecked} />
+              {loading ? (
+                <div className="flex flex-wrap justify-center gap-4 px-10">
+                  <BeatLoader color="white" />
+                </div>
+              ) : (
+                <div className="flex flex-wrap justify-center gap-4 px-10">
+                  {plans?.map((item: any, index: number) => (
+                    <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 2xl:w-1/4">
+                      <div className="flex justify-center">
+                        <PlanCardDetail data={item} isAnnual={isChecked} />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </MainLayout>

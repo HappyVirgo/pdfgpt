@@ -390,7 +390,7 @@ const ChatLayout: React.FC = () => {
           </div>
         </div>
       )}
-      {file?.file && showPdf && (
+      {(file?.file || file?.s3_url) && showPdf && (
         <div
           className={`w-full px-8 pt-12 pb-16 h-full md:w-1/2 bg-primary fixed md:relative top-0 ${
             showPdf && file ? "fixed md:relative" : "hidden"
@@ -403,7 +403,7 @@ const ChatLayout: React.FC = () => {
           <div className="w-full h-full mt-4 overflow-auto bg-white">
             <Document
               ref={pdfRef}
-              file={file?.file}
+              file={file?.s3_url ? file?.s3_url : file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
               onLoadError={() => {
                 toast("Loading PDF is failed");

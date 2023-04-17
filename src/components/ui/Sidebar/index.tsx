@@ -103,6 +103,7 @@ const Sidebar = () => {
         });
         return newFiles;
       });
+      setShowPdf(true);
     } catch (error: any) {
       toast("Faild Fetching. " + error);
     }

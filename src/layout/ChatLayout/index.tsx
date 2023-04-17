@@ -96,7 +96,7 @@ const ChatLayout: React.FC = () => {
   async function generateEmbedding(sentenceList: any[]) {
     let delay = 0;
     try {
-      if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 0)) {
+      if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
         toast(`Can't be processed, pdf has ore than ${user?.Plan.pages ?? 0} pages`);
       }
       setLoading(true);

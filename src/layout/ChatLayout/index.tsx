@@ -25,7 +25,7 @@ const ChatLayout: React.FC = () => {
   const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, setRecent, pageNum } =
     useContext(MainContext);
   const chatWindowRef = useRef<HTMLDivElement>(null);
-  const pdfRef = useRef<unknown>();
+  const pdfRef = useRef<any>();
   const sentenceRef = useRef<string[]>();
   const settings = useRef<any>(null);
 
@@ -38,8 +38,9 @@ const ChatLayout: React.FC = () => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
 
   function scrollToPage(num: number) {
-    // @ts-ignore
-    pdfRef?.current.pages[num - 1].scrollIntoView();
+    if (pdfRef?.current?.pages?.length > 0) {
+      pdfRef?.current?.pages[num - 1]?.scrollIntoView();
+    }
   }
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const ChatLayout: React.FC = () => {
 
   useEffect(() => {
     if (pageNum > 1) {
-      scrollToPage(pageNum);
+      scrollToPage(pageNum ?? 1);
     }
   }, [pageNum]);
 
@@ -401,11 +402,12 @@ const ChatLayout: React.FC = () => {
           <p className="text-center text-lightText">{file?.name}</p>
           <div className="w-full h-full mt-4 overflow-auto bg-white">
             <Document
-              /* @ts-ignore */
               ref={pdfRef}
               file={file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={(error) => {}}
+              onLoadError={() => {
+                toast("Loading PDF is failed");
+              }}
             >
               {Array.from(new Array(file.total_pages), (_el, index) => (
                 <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} />

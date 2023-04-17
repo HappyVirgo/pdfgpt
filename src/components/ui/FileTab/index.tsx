@@ -97,8 +97,12 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
             <a
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedFile(item);
-                setShowPopUp(true);
+                if (item.file || item.messages.length > 0 || item.s3_url) {
+                  setSelectedFile(item);
+                  setShowPopUp(true);
+                } else {
+                  removeDocument(item);
+                }
               }}
               className="absolute top-0 right-0 p-1"
             >

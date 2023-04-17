@@ -11,7 +11,6 @@ const MyDropzone = () => {
   const { setShowPdf, setFiles } = useContext(MainContext);
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    // @ts-ignore
     if ((file?.size ?? 0) > (user?.Plan?.size ?? 0) * 1024 * 1024) {
       toast("File size is over, you should upgrate your plan!");
       return;

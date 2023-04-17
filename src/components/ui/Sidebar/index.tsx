@@ -108,6 +108,20 @@ const Sidebar = () => {
     }
   };
 
+  const deleteHistory = async (selected: DocumentType) => {
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/${selected.id}`, {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      });
+      setFiles((prev) => [...prev.filter((item) => item.uid !== selected.uid)]);
+      toast("History is deleted");
+    } catch (error: any) {
+      toast("Faild Fetching. " + error);
+    }
+  };
+
   const addNewDocument = () => {
     if (files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) {
       setFiles((prev: FileType[]) => [
@@ -183,8 +197,9 @@ const Sidebar = () => {
                         <span className="flex-1 truncate whitespace-nowrap">{`${item?.name}-${item?.uid}`}</span>
                         <a
                           className="flex-none"
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.stopPropagation();
+                            await deleteHistory(item);
                           }}
                         >
                           <TrashIcon className="w-5" />
@@ -193,18 +208,6 @@ const Sidebar = () => {
                     ))}
                   </div>
                 </Accordion>
-                {/* <Accordion title="Google Drive">
-                  <button className="w-32 ml-6 space-y-1 text-sm" onClick={() => {}}>
-                    {driveFiles?.map((item) => (
-                      <a className="flex items-center justify-start w-full gap-1" key={item.id}>
-                        <div className="flex-none">
-                          <DocumentTextIcon className="w-5" />
-                        </div>
-                        <div className="flex-1 text-left truncate whitespace-nowrap">{item.name}</div>
-                      </a>
-                    ))}
-                  </button>
-                </Accordion> */}
               </>
             )}
           </div>

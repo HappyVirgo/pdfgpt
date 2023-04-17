@@ -97,7 +97,7 @@ const ChatLayout: React.FC = () => {
     let delay = 0;
     try {
       if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
-        toast(`Can't be processed, pdf has ore than ${user?.Plan.pages ?? 0} pages`);
+        toast(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
       }
       setLoading(true);
       let resp = await fetch("https://jsonip.com", { mode: "cors" });

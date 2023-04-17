@@ -138,6 +138,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
                 if (selectedFile) {
                   await saveHistory(selectedFile);
                   removeDocument(selectedFile);
+                  setShowPopUp(false);
                 }
               }}
             />

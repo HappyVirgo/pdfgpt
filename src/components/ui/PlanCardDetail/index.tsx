@@ -7,6 +7,8 @@ import axios from "axios";
 import { ScaleLoader } from "react-spinners";
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import { toast } from "react-toastify";
+import { useGoogleLogin } from "@react-oauth/google";
+import { MainContext } from "../../../layout/MainContextProvider";
 
 type PlanCardDetailProps = {
   data: { [key: string]: any };
@@ -15,7 +17,8 @@ type PlanCardDetailProps = {
 
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
   const [loading, setLoading] = useState(false);
-  const { user, tokens, setUser } = useContext(AuthContext);
+  const { user, tokens, setUser, setTokens } = useContext(AuthContext);
+  const { setDriveFiles, setRecent } = useContext(MainContext);
   const handlePay = async () => {
     setLoading(true);
     if (user?.current_plan_id === data.id) {
@@ -59,6 +62,28 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
     setLoading(false);
   };
 
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      localStorage.setItem("googleAuthToken", tokenResponse?.access_token ?? "");
+      try {
+        const { data } = await axios.post("api/auth", { tokens: tokenResponse });
+        setTokens(data?.tokens);
+        setUser(data?.user);
+        setDriveFiles(data?.files ?? []);
+        setRecent(data?.recent ?? []);
+        localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
+        localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
+        await handlePay();
+        setLoading(false);
+      } catch (error) {
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("accessToken");
+        setLoading(false);
+      }
+    },
+  });
+
   return (
     <div className="relative w-full max-w-xs px-4 pt-4 pb-10 mb-2 text-black bg-white rounded-md shadow-md">
       <p className="flex items-center justify-center mt-1 mb-3 text-lg font-medium">
@@ -77,15 +102,24 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
             <hr className={`w-0.5 h-6 mx-6 ${data.name === "Ultimate" ? "bg-black" : "bg-white"}`} />
             <span className="text-xl font-normal">{isAnnual ? "Year" : "Month"}</span>
           </div>
-          {user && (
+          {user ? (
             <button
               type="button"
               className={`w-full flex items-center justify-center gap-2 p-3 my-10 text-white rounded-md ${
-                user.current_plan_id === data.id ? "bg-red-400" : "bg-purple"
+                user?.current_plan_id === data.id ? "bg-red-400" : "bg-purple"
               }`}
               onClick={handlePay}
             >
-              {user.current_plan_id === data.id ? "Cancel Plan" : "Pay now"}
+              {user?.current_plan_id === data.id ? "Cancel Plan" : "Pay now"}
+              {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
+            </button>
+          ) : (
+            <button
+              className="w-full flex my-10 items-center justify-center gap-2 p-3 text-white bg-purple rounded-md"
+              type="button"
+              onClick={() => login()}
+            >
+              Pay now
               {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
             </button>
           )}

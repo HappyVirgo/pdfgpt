@@ -35,8 +35,18 @@ import { toast } from "react-toastify";
 export type DocumentType = { id: number; name: string; ip: string; s3_link: string; total_pages: number; uid: string };
 
 const Sidebar = () => {
-  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, setDriveFiles, setFiles, files, recent } =
-    useContext(MainContext);
+  const {
+    isDarkTheme,
+    toggleThemeHandler,
+    showPdf,
+    setShowPdf,
+    setShowSetting,
+    setDriveFiles,
+    setFiles,
+    files,
+    recent,
+    setRecent,
+  } = useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser, setTokens, tokens } = useContext(AuthContext);
@@ -55,6 +65,7 @@ const Sidebar = () => {
         const { data } = await axios.post("api/auth", { tokens: tokenResponse });
         setUser(data?.user);
         setDriveFiles(data?.files ?? []);
+        setRecent(data?.recent ?? []);
         setTokens(data?.tokens);
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
@@ -160,27 +171,26 @@ const Sidebar = () => {
               <>
                 <Accordion title="Recent">
                   <div className="w-32 ml-6 text-sm">
-                    {
-                      recent.map((item, index) => (
-                        <button
-                          key={index}
-                          className="py-0.5 cursor-pointer w-full gap-1 flex items-center"
-                          onClick={() => loadHistory(item)}
+                    {recent.map((item, index) => (
+                      <button
+                        key={index}
+                        className="py-0.5 cursor-pointer w-full gap-1 flex items-center"
+                        onClick={() => loadHistory(item)}
+                      >
+                        <div className="flex-none">
+                          <DocumentTextIcon className="w-5" />
+                        </div>
+                        <span className="flex-1 truncate whitespace-nowrap">{`${item?.name}-${item?.uid}`}</span>
+                        <a
+                          className="flex-none"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
                         >
-                          <div className="flex-none">
-                            <DocumentTextIcon className="w-5" />
-                          </div>
-                          <span className="flex-1 truncate whitespace-nowrap">{`${item?.name}-${item?.uid}`}</span>
-                          <a
-                            className="flex-none"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <TrashIcon className="w-5" />
-                          </a>
-                        </button>
-                      ))}
+                          <TrashIcon className="w-5" />
+                        </a>
+                      </button>
+                    ))}
                   </div>
                 </Accordion>
                 {/* <Accordion title="Google Drive">

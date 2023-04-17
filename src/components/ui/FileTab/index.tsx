@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import * as uuid from "uuid";
 import { FileType, MainContext } from "../../../layout/MainContextProvider";
 import { CircleStackIcon, DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "../../../layout/AuthContextProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Modal from "../../basic/Modal";
+import Button from "../../basic/Button";
 
 type FileTabProps = {
   loading: boolean;
@@ -13,6 +15,8 @@ type FileTabProps = {
 const FileTab: React.FC<FileTabProps> = ({ loading }) => {
   const { tokens } = useContext(AuthContext);
   const { files, setFiles, setShowPdf } = useContext(MainContext);
+  const [shwoPopUp, setShowPopUp] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<FileType>();
   const addNewDocument = () => {
     if (files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) {
       setFiles((prev: FileType[]) => [
@@ -93,9 +97,8 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
             <a
               onClick={(e) => {
                 e.stopPropagation();
-                if (!loading) {
-                  removeDocument(item);
-                }
+                setSelectedFile(item);
+                setShowPopUp(true);
               }}
               className="absolute top-0 right-0 p-1"
             >
@@ -121,6 +124,23 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
       >
         <DocumentPlusIcon className="w-5" />
       </button>
+      <Modal isOpen={shwoPopUp} setIsOpen={setShowPopUp} title="You have unsaved history">
+        <div className="mt-5 space-y-2 text-center">
+          <p>You have unsaved history, are you sure you want to close tab</p>
+          <div className="flex items-center justify-center gap-5">
+            <Button
+              text="Save"
+              onClick={async () => {
+                if (selectedFile) {
+                  await saveHistory(selectedFile);
+                  removeDocument(selectedFile);
+                }
+              }}
+            />
+            <Button text="Cancel" onClick={() => setShowPopUp(false)} />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

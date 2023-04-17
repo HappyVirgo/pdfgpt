@@ -14,11 +14,11 @@ import MyDropzone from "../../components/basic/Dropzone";
 import Reply from "../../assets/svg/reply.svg";
 import { AuthContext } from "../AuthContextProvider";
 import { FileType, MainContext } from "../MainContextProvider";
+import { MessageItem } from "../MainContextProvider";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import { MessageItem } from "../MainContextProvider";
 
 const ChatLayout: React.FC = () => {
   const { tokens, user } = useContext(AuthContext);

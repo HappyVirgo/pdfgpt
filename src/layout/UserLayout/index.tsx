@@ -5,6 +5,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { BeatLoader } from "react-spinners";
 
 import Button from "../../components/basic/Button";
 import Input from "../../components/basic/Input";
@@ -91,6 +92,7 @@ const UserLayout: React.FC = () => {
 
   async function getCustomerInfo() {
     try {
+      setIsLoading(true);
       const token = tokens?.accessToken;
       if (token) {
         const { data } = await axios.post("api/stripe/get-customer-info", { token: token });
@@ -108,7 +110,9 @@ const UserLayout: React.FC = () => {
           setIsPaymentMethod(true);
         }
       }
+      setIsLoading(false);
     } catch (error: any) {
+      setIsLoading(false);
       push("/");
     }
   }
@@ -222,81 +226,93 @@ const UserLayout: React.FC = () => {
                     }}
                   />
                 </div>
-                <div className="mt-8 lg:w-1/2 md:w-full">
-                  {cardEditable ? (
-                    <div>
+                {isLoading ? (
+                  <div className="mt-8 lg:w-1/2 md:w-full text-center">
+                    <BeatLoader color="white" />
+                  </div>
+                ) : (
+                  <div className="mt-8 lg:w-1/2 md:w-full">
+                    {cardEditable ? (
                       <div>
-                        <p>Card Number</p>
-                        <Input
-                          register={cardRegister}
-                          placeholder="0000 0000 0000 0000"
-                          name="cardNumber"
-                          isEditable={cardEditable}
-                          error={`${cardErrors?.cardNumber?.message ?? ""}`}
-                        />
-                      </div>
-                      <div className="flex gap-4 mt-4">
-                        <div className="w-full">
-                          <p>Expire Date</p>
+                        <div>
+                          <p>Card Number</p>
                           <Input
                             register={cardRegister}
-                            placeholder="MM/YY"
-                            name="cardExpiry"
+                            placeholder="0000 0000 0000 0000"
+                            name="cardNumber"
                             isEditable={cardEditable}
-                            error={`${cardErrors?.cardExpiry?.message ?? ""}`}
+                            error={`${cardErrors?.cardNumber?.message ?? ""}`}
                           />
                         </div>
-                        <div className="w-full">
-                          <p>CVC</p>
-                          <Input
-                            register={cardRegister}
-                            placeholder="000"
-                            name="cvc"
-                            isEditable={cardEditable}
-                            error={`${cardErrors?.cvc?.message ?? ""}`}
+                        <div className="flex gap-4 mt-4">
+                          <div className="w-full">
+                            <p>Expire Date</p>
+                            <Input
+                              register={cardRegister}
+                              placeholder="MM/YY"
+                              name="cardExpiry"
+                              isEditable={cardEditable}
+                              error={`${cardErrors?.cardExpiry?.message ?? ""}`}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <p>CVC</p>
+                            <Input
+                              register={cardRegister}
+                              placeholder="000"
+                              name="cvc"
+                              isEditable={cardEditable}
+                              error={`${cardErrors?.cvc?.message ?? ""}`}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-4 mt-8 mb-4">
+                          <Button text="Save" additionalClass="border" type="submit" loading={isLoading} />
+                          <Button
+                            text="Cancel"
+                            additionalClass="border"
+                            onClick={() => {
+                              setCardEditable(false);
+                            }}
                           />
                         </div>
                       </div>
-                      <div className="flex justify-end gap-4 mt-8 mb-4">
-                        <Button text="Save" additionalClass="border" type="submit" loading={isLoading} />
-                        <Button
-                          text="Cancel"
-                          additionalClass="border"
-                          onClick={() => {
-                            setCardEditable(false);
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    isPaymentMethod && (
-                      <div className="p-6 text-base text-white rounded-md bg-purple bg-gradient-to-b from-indigo-500">
-                        <p>YOUR NAME</p>
-                        <div className="mt-10">{cardInfo.number}</div>
-                        <div className="flex justify-between mt-3">
-                          <p>{cardInfo.expiry}</p>
-                          <MasterCardIcon />
+                    ) : (
+                      isPaymentMethod && (
+                        <div className="p-6 text-base text-white rounded-md bg-purple bg-gradient-to-b from-indigo-500">
+                          <p>YOUR NAME</p>
+                          <div className="mt-10">{cardInfo.number}</div>
+                          <div className="flex justify-between mt-3">
+                            <p>{cardInfo.expiry}</p>
+                            <MasterCardIcon />
+                          </div>
                         </div>
-                      </div>
-                    )
-                  )}
-                </div>
+                      )
+                    )}
+                  </div>
+                )}
               </form>
             </div>
-            <div className="col-span-12 mb-8 lg:col-span-4 md:col-span-6">
-              {!!plan && (
-                <PlanCard
-                  title={`${plan.name}`}
-                  description={planDescription[plan.id - 1]}
-                  pages={plan.pages}
-                  pdf={plan.pdf}
-                  query={plan.query}
-                  size={plan.size}
-                  users={plan.user}
-                  price={plan.price}
-                />
-              )}
-            </div>
+            {isLoading ? (
+              <div className="col-span-12 mb-8 lg:col-span-4 md:col-span-6 text-center">
+                <BeatLoader color="white" />
+              </div>
+            ) : (
+              <div className="col-span-12 mb-8 lg:col-span-4 md:col-span-6">
+                {!!plan && (
+                  <PlanCard
+                    title={`${plan.name}`}
+                    description={planDescription[plan.id - 1]}
+                    pages={plan.pages}
+                    pdf={plan.pdf}
+                    query={plan.query}
+                    size={plan.size}
+                    users={plan.user}
+                    price={plan.price}
+                  />
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

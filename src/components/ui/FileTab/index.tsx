@@ -53,17 +53,26 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
   };
 
   const removeDocument = (selected: FileType) => {
-    setFiles((prev: FileType[]) => [
-      ...prev
-        .filter((item: FileType) => item.uid !== selected.uid)
-        .sort((a, b) => a.order - b.order)
-        .map((item, index) => ({ ...item, order: index + 1 })),
-    ]);
+    setFiles((prev: FileType[]) => {
+      const newFiles = [
+        ...prev
+          .filter((item: FileType) => item.uid !== selected.uid)
+          .sort((a, b) => a.order - b.order)
+          .map((item, index) => ({ ...item, order: index + 1 })),
+      ];
+      newFiles[newFiles.length - 1].active = true;
+      return newFiles;
+    });
   };
 
   const saveHistory = async (selected: FileType) => {
     if (!tokens) {
       toast("You should login or upgrade plan to save this history");
+      return;
+    }
+
+    if (!selected.isEmbedded && !selected.file) {
+      toast("You should upload files");
       return;
     }
 

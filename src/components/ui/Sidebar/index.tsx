@@ -35,35 +35,17 @@ import { toast } from "react-toastify";
 export type DocumentType = { id: number; name: string; ip: string; s3_link: string; total_pages: number; uid: string };
 
 const Sidebar = () => {
-  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, setDriveFiles, setFiles, files } =
+  const { isDarkTheme, toggleThemeHandler, showPdf, setShowPdf, setShowSetting, setDriveFiles, setFiles, files, recent } =
     useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser, setTokens, tokens } = useContext(AuthContext);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
-  const [history, setHistory] = useState<DocumentType[]>([]);
 
   const toggleThemeHander = () => {
     toggleThemeHandler();
   };
-
-  const loadHistories = async () => {
-    try {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
-        headers: {
-          Authorization: `Bearer ${tokens?.accessToken}`,
-        },
-      });
-      setHistory(data.documents);
-    } catch (error) {
-      setHistory([]);
-    }
-  };
-
-  useEffect(() => {
-    loadHistories();
-  }, []);
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -178,8 +160,8 @@ const Sidebar = () => {
               <>
                 <Accordion title="Recent">
                   <div className="w-32 ml-6 text-sm">
-                    {history.length > 0 &&
-                      history.map((item, index) => (
+                    {
+                      recent.map((item, index) => (
                         <button
                           key={index}
                           className="py-0.5 cursor-pointer w-full gap-1 flex items-center"

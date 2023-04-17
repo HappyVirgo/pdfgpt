@@ -10,6 +10,16 @@ type DriveFileType = {
   name: string;
 };
 
+type DocumentType = {
+  id: number;
+  ip: string;
+  name: string;
+  s3_link: string;
+  total_pages: number;
+  uid: string;
+  user_id: number;
+}
+
 export type MessageItem = {
   type: "QUESTION" | "REPLY";
   message: string;
@@ -38,8 +48,8 @@ type MainContextType = {
   setFiles: React.Dispatch<SetStateAction<FileType[]>>;
   showSetting: boolean;
   setShowSetting: React.Dispatch<SetStateAction<boolean>>;
-  recent: { [key: string]: string }[];
-  setRecent: React.Dispatch<SetStateAction<{ [key: string]: string }[]>>;
+  recent: DocumentType[];
+  setRecent: React.Dispatch<SetStateAction<DocumentType[]>>;
   pageNum: number;
   setPageNum: React.Dispatch<SetStateAction<number>>;
   driveFiles: DriveFileType[];
@@ -75,7 +85,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
   const [showPdf, setShowPdf] = useState<boolean>(false);
   const [files, setFiles] = useState<FileType[]>([]);
   const [showSetting, setShowSetting] = useState(false);
-  const [recent, setRecent] = useState<{ [key: string]: string }[]>([]);
+  const [recent, setRecent] = useState<DocumentType[]>([]);
   const [pageNum, setPageNum] = useState<number>(1);
   const [driveFiles, setDriveFiles] = useState<DriveFileType[]>([]);
   const { setUser, setTokens } = useContext(AuthContext);
@@ -103,9 +113,9 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
       const google_token = typeof window !== "undefined" ? localStorage.getItem("googleAuthToken") : null;
       if (token && google_token) {
         const { data } = await axios.post("api/auto_login", { token, google_token });
-        console.log('data: ', data);
         setUser(data?.user);
         setTokens(data?.tokens);
+        setRecent(data?.recent)
         setDriveFiles(data?.files);
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");

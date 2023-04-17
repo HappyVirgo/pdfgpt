@@ -103,6 +103,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
       const google_token = typeof window !== "undefined" ? localStorage.getItem("googleAuthToken") : null;
       if (token && google_token) {
         const { data } = await axios.post("api/auto_login", { token, google_token });
+        console.log('data: ', data);
         setUser(data?.user);
         setTokens(data?.tokens);
         setDriveFiles(data?.files);

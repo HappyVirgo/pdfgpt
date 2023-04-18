@@ -100,15 +100,13 @@ const ChatLayout: React.FC = () => {
         toast(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
       }
       setLoading(true);
-      let resp = await fetch("https://jsonip.com", { mode: "cors" });
-      const { ip } = await resp.json();
-      if (typeof window !== "undefined") localStorage.setItem("ip", ip.split(",")[0]);
-
+      const uid = uuid.v4();
+      localStorage.setItem("uid", uid);
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/embedding`, {
           sentence_list: sentenceList,
-          ip: ip,
-          file_name: `${file?.name}-${file?.uid}`,
+          ip: user ? user.id : uid,
+          file_name: `${file?.uid}-${file?.name}`,
           apiKey: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "",
         });
         setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
@@ -209,7 +207,7 @@ const ChatLayout: React.FC = () => {
           query: value,
           apiKey: settings.current?.apiKey,
           matches: 5,
-          ip: typeof window !== "undefined" ? localStorage.getItem("ip") : "",
+          ip: user ? user.id : localStorage.getItem("uid"),
           fileName: `${file?.uid}-${file?.name}`,
         },
       });

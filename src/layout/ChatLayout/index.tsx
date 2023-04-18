@@ -93,7 +93,6 @@ const ChatLayout: React.FC = () => {
   }, [showSetting]);
 
   async function generateEmbedding(sentenceList: any[]) {
-    let delay = 0;
     try {
       if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
         toast(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
@@ -102,13 +101,23 @@ const ChatLayout: React.FC = () => {
       let resp = await fetch("https://jsonip.com", { mode: "cors" });
       const { ip } = await resp.json();
       if (typeof window !== "undefined") localStorage.setItem("ip", ip.split(",")[0]);
-      const res = await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/split-chunks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: { sentenceList },
-      });
+
+      try {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/embedding`, {
+          sentence_list: sentenceList,
+          ip: ip,
+          file_name: `${file?.name}-${file?.uid}`,
+          apiKey: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "",
+        });
+        setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
+        setbotmsg(true);
+        setShowAlert(true);
+        setLoading(false);
+      } catch (error) {
+        console.log("error: ", error);
+        setLoading(false);
+      }
+
       if (user) {
         try {
           const formData = new FormData();
@@ -129,31 +138,6 @@ const ChatLayout: React.FC = () => {
           toast("File upload is faild");
         }
       }
-      const { chunkList } = res.data;
-      const chunkSize = chunkList.length > 80 ? 80 : Number(chunkList.length);
-
-      for (let i = 0; i < chunkList.length; i += chunkSize) {
-        const chunk = chunkList.slice(i, i + chunkSize);
-
-        await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/embedding`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data: {
-            sentenceList: chunk,
-            apiKey: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "",
-            ip: ip.split(",")[0],
-            // @ts-ignore
-            fileName: `${file.uid}-${file.name}`,
-            delay,
-          },
-        });
-      }
-      setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
-      setbotmsg(true);
-      setShowAlert(true);
-      setLoading(false);
     } catch (error) {
       toast("You have reached you api limits, Try after sometime.");
       return;

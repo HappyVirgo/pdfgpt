@@ -144,7 +144,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
           <div className="flex items-center justify-center gap-5">
             <Button
               text="Save"
-              additionalClass="text-bgRadialEnd"
+              additionalClass="text-purple"
               onClick={async () => {
                 if (selectedFile) {
                   await saveHistory(selectedFile);
@@ -153,7 +153,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
                 }
               }}
             />
-            <Button additionalClass="text-bgRadialEnd" text="Cancel" onClick={() => setShowPopUp(false)} />
+            <Button additionalClass="text-purple" text="Cancel" onClick={() => setShowPopUp(false)} />
           </div>
         </div>
       </Modal>

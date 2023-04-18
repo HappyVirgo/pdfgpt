@@ -195,7 +195,7 @@ const Sidebar = () => {
                         <div className="flex-none">
                           <DocumentTextIcon className="w-5" />
                         </div>
-                        <span className="flex-1 truncate whitespace-nowrap">{`${item?.name}-${item?.uid}`}</span>
+                        <span className="flex-1 truncate whitespace-nowrap">{item?.name}</span>
                         <a
                           className="flex-none"
                           onClick={async (e) => {

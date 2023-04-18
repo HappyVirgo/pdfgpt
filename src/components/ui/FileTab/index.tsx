@@ -107,7 +107,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
               item.active ? "rounded-tr-lg bg-bgRadialEnd" : "bg-primary rounded-none"
             }`}
           >
-            <span>{`${item.name}-${item.uid}`}</span>
+            <span>{item.name}</span>
             <a
               onClick={(e) => {
                 e.stopPropagation();

@@ -394,9 +394,7 @@ const ChatLayout: React.FC = () => {
               ref={pdfRef}
               file={file?.s3_url ? file?.s3_url : file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={() => {
-                toast("Loading PDF is failed");
-              }}
+              onLoadError={() => {}}
             >
               {Array.from(new Array(file.total_pages), (_el, index) => (
                 <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} />
@@ -424,9 +422,11 @@ const ChatLayout: React.FC = () => {
             </Link>
             <button
               className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
-              onClick={() => setShowSaveErrorModal(false)}
+              onClick={() => {
+                setShowSaveErrorModal(false);
+              }}
             >
-              Close
+              Cacel
             </button>
           </div>
         </div>

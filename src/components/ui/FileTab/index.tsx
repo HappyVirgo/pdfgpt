@@ -165,8 +165,25 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setEr
             >
               Save
             </button>
-            <button className="px-4 py-2 rounded-md text-bgRadialEnd bg-third" onClick={() => setShowPopUp(false)}>
-              Cancel
+            <button
+              className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
+              onClick={() => {
+                setShowPopUp(false);
+                setFiles((prev: FileType[]) => {
+                  const newFiles = [
+                    ...prev
+                      .filter((item: FileType) => !item.active)
+                      .sort((a, b) => a.order - b.order)
+                      .map((item, index) => ({ ...item, order: index + 1 })),
+                  ];
+                  if (newFiles.length > 0) {
+                    newFiles[newFiles.length - 1].active = true;
+                  }
+                  return newFiles;
+                });
+              }}
+            >
+              Close
             </button>
           </div>
         </div>

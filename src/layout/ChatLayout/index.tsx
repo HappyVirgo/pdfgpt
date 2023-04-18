@@ -280,7 +280,7 @@ const ChatLayout: React.FC = () => {
         });
         requestAnimationFrame(() => scrollToBottom());
       }
-
+      localStorage.setItem("files", JSON.stringify(files));
       scrollToBottom();
     } catch (error) {
       setLoading(false);

@@ -6,7 +6,6 @@ import { AuthContext } from "../../../layout/AuthContextProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Modal from "../../basic/Modal";
-import Button from "../../basic/Button";
 
 type FileTabProps = {
   loading: boolean;

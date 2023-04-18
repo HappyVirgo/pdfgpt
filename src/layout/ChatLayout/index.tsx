@@ -19,6 +19,7 @@ import { MessageItem } from "../MainContextProvider";
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
 import "react-pdf/dist/esm/Page/TextLayer.css";
+import Link from "next/link";
 
 const ChatLayout: React.FC = () => {
   const { tokens, user } = useContext(AuthContext);
@@ -33,6 +34,7 @@ const ChatLayout: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [question, setQuestion] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [showSaveErroModal, setShowSaveErrorModal] = useState(false);
   const [file, setFile] = useState<FileType>();
   const [messages, setMessages] = useState<MessageItem[]>([]);
 
@@ -299,7 +301,7 @@ const ChatLayout: React.FC = () => {
 
   return (
     <div className="relative w-full h-full md:flex">
-      <FileTab loading={loading} />
+      <FileTab loading={loading} setShowSaveErrorModal={setShowSaveErrorModal} />
       {file && (
         <div
           className={`relative ${
@@ -398,6 +400,22 @@ const ChatLayout: React.FC = () => {
           <div className="flex justify-center gap-5 mt-5">
             <button className="px-4 py-2 rounded-md text-bgRadialEnd bg-third" onClick={() => setShowAlert(false)}>
               OK
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal isOpen={showSaveErroModal} setIsOpen={setShowSaveErrorModal}>
+        <div className="w-full max-w-lg text-bgRadialEnd">
+          <p>You should login or upgrade plan to save this history</p>
+          <div className="flex justify-center gap-5 mt-5">
+            <Link href="/plan" className="px-4 py-2 rounded-md text-bgRadialEnd bg-third">
+              Go to Plan
+            </Link>
+            <button
+              className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
+              onClick={() => setShowSaveErrorModal(false)}
+            >
+              Cancel
             </button>
           </div>
         </div>

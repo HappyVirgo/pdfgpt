@@ -10,9 +10,10 @@ import Button from "../../basic/Button";
 
 type FileTabProps = {
   loading: boolean;
+  setShowSaveErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const FileTab: React.FC<FileTabProps> = ({ loading }) => {
+const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal }) => {
   const { tokens } = useContext(AuthContext);
   const { files, setFiles, setShowPdf } = useContext(MainContext);
   const [shwoPopUp, setShowPopUp] = useState(false);
@@ -69,7 +70,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
 
   const saveHistory = async (selected: FileType) => {
     if (!tokens) {
-      toast("You should login or upgrade plan to save this history");
+      setShowSaveErrorModal(true);
       return;
     }
 
@@ -142,9 +143,8 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
         <div className="mt-5 space-y-2 text-center text-bgRadialEnd">
           <p>You have unsaved history, are you sure you want to close tab</p>
           <div className="flex items-center justify-center gap-5">
-            <Button
-              text="Save"
-              additionalClass="text-purple"
+            <button
+              className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
               onClick={async () => {
                 if (selectedFile) {
                   await saveHistory(selectedFile);
@@ -152,8 +152,12 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
                   setShowPopUp(false);
                 }
               }}
-            />
-            <Button additionalClass="text-purple" text="Cancel" onClick={() => setShowPopUp(false)} />
+            >
+              Save
+            </button>
+            <button className="px-4 py-2 rounded-md text-bgRadialEnd bg-third" onClick={() => setShowPopUp(false)}>
+              Cancel
+            </button>
           </div>
         </div>
       </Modal>

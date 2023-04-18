@@ -114,7 +114,6 @@ const ChatLayout: React.FC = () => {
         setShowAlert(true);
         setLoading(false);
       } catch (error) {
-        console.log("error: ", error);
         setLoading(false);
       }
 

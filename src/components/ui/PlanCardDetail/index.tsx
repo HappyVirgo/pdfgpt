@@ -16,7 +16,6 @@ type PlanCardDetailProps = {
 };
 
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
-  console.log("data: ", data);
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(false);
   const { user, tokens, setUser, setTokens } = useContext(AuthContext);

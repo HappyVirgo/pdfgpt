@@ -14,8 +14,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, setIsOpen, children, title }) => 
       <div className="fixed inset-0 bg-black/60" aria-hidden="true" />
       <div className="fixed inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-full">
-          <Dialog.Panel className="w-full max-w-lg p-4 mx-auto bg-white rounded dark:bg-primary">
-            <Dialog.Title className="text-lg font-bold text-center">{title}</Dialog.Title>
+          <Dialog.Panel className="w-full max-w-lg p-4 mx-auto bg-white rounded">
+            <Dialog.Title className="text-lg font-bold text-center text-bgRadialEnd">{title}</Dialog.Title>
             {children}
           </Dialog.Panel>
         </div>

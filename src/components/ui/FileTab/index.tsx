@@ -139,11 +139,12 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
         <DocumentPlusIcon className="w-5" />
       </button>
       <Modal isOpen={shwoPopUp} setIsOpen={setShowPopUp} title="You have unsaved history">
-        <div className="mt-5 space-y-2 text-center">
+        <div className="mt-5 space-y-2 text-center text-bgRadialEnd">
           <p>You have unsaved history, are you sure you want to close tab</p>
           <div className="flex items-center justify-center gap-5">
             <Button
               text="Save"
+              additionalClass="text-bgRadialEnd"
               onClick={async () => {
                 if (selectedFile) {
                   await saveHistory(selectedFile);
@@ -152,7 +153,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading }) => {
                 }
               }}
             />
-            <Button text="Cancel" onClick={() => setShowPopUp(false)} />
+            <Button additionalClass="text-bgRadialEnd" text="Cancel" onClick={() => setShowPopUp(false)} />
           </div>
         </div>
       </Modal>

@@ -14,8 +14,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [apikey, setApiKey] = useState("");
 
   const onSaveSettings = (value: string) => {
-    if (typeof window !== "undefined") localStorage.setItem("settings", JSON.stringify({ apiKey: value }));
-    setShowSetting(false);
+    if (value) {
+      if (typeof window !== "undefined") localStorage.setItem("settings", JSON.stringify({ apiKey: value }));
+      setShowSetting(false);
+    }
   };
 
   useEffect(() => {

@@ -106,6 +106,13 @@ const ChatLayout: React.FC = () => {
         setShowSaveErrorModal(true);
         return;
       }
+
+      const apiKey = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "";
+      if (!apiKey) {
+        setShowSetting(true);
+        return;
+      }
+
       setLoading(true);
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {
@@ -117,7 +124,7 @@ const ChatLayout: React.FC = () => {
           sentence_list: sentenceList,
           ip: user ? user.id : uid,
           file_name: `${file?.uid}-${file?.name}`,
-          apiKey: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "",
+          apiKey: apiKey,
         });
         setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
         setbotmsg(true);

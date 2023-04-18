@@ -123,6 +123,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
       }
       setIsLoading(false);
       const savedFiles = typeof window !== "undefined" ? JSON.parse(`${localStorage.getItem("files")}`) : [];
+      console.log("savedFiles: ", savedFiles);
       if (savedFiles?.length) {
         setFiles(savedFiles ?? []);
       } else {
@@ -133,7 +134,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
           uid: uid,
           file: undefined,
           ip: "",
-          s3_url: "",
+          s3_url: undefined,
           active: true,
           messages: [],
           isEmbedded: false,

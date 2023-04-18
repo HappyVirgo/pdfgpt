@@ -72,6 +72,7 @@ const ChatLayout: React.FC = () => {
         setShowPdf(false);
       }
     }
+    localStorage.setItem("files", JSON.stringify(files));
   }, [files]);
 
   useEffect(() => {

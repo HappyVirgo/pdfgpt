@@ -121,6 +121,8 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
       }
       setIsLoading(false);
+      const savedFiles = JSON.parse(`${localStorage.getItem("files")}`);
+      setFiles(savedFiles);
     } catch (error: any) {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");

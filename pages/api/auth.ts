@@ -16,9 +16,9 @@ type ResponseDateType = {
     family_name: string;
     picture: string;
     locale: string;
-    plan: any
+    plan: any;
   };
-  recent: any[],
+  recent: any[];
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseDateType>) {

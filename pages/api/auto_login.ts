@@ -28,6 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
     return res.status(200).json(data);
   } catch (error: any) {
-    return res.status(error?.response?.status).json(error.response.data);
+    return res.status(error?.response?.status).json(error?.response?.data);
   }
 }

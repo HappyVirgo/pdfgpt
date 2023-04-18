@@ -1,67 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import Head from "next/head";
 
 import MainLayout from "../src/layout/MainLayout";
 import styles from "@/styles/Home.module.css";
-import PlanCardDetail from "../src/components/ui/PlanCardDetail";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { AuthContext } from "../src/layout/AuthContextProvider";
-import { toast } from "react-toastify";
-import { BeatLoader } from "react-spinners";
 
 export default function Plan() {
-  const router = useRouter();
-  const { tokens, user, setUser } = useContext(AuthContext);
-  const [isChecked, setIsChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [plans, setPlans] = useState<{ [key: string]: any }[]>([]);
-
-  const handleChange = () => {
-    setIsChecked((prevCheck) => !prevCheck);
-  };
-
-  const getPlan = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.post("api/stripe/plan", {
-        token: tokens?.accessToken,
-      });
-      setPlans(data.data.plans);
-    } catch (error) {
-      setPlans([]);
-    }
-    setLoading(false);
-  };
-
-  const onSuccess = async () => {
-    if (router.query?.session_id && user) {
-      try {
-        const { data: res } = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/success`,
-          {
-            session_id: router.query?.session_id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${tokens?.accessToken}`,
-            },
-          }
-        );
-        setUser(res.user);
-      } catch (error: any) {
-        toast("Fetching checkout session info faild. " + error?.response?.data?.message);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (router.isReady) {
-      getPlan();
-      onSuccess();
-    }
-  }, [router.isReady]);
-
   return (
     <>
       <Head>

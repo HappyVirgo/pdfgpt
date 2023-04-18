@@ -47,7 +47,7 @@ const ChatLayout: React.FC = () => {
   }
 
   useEffect(() => {
-    if (!files.length) {
+    if (!files?.length) {
       const uid = uuid.v4();
       const newObj = {
         order: 1,
@@ -63,7 +63,7 @@ const ChatLayout: React.FC = () => {
       setFiles([newObj]);
       setFile(newObj);
     } else {
-      const actived = files.find((item) => item.active);
+      const actived = files?.find((item) => item.active);
       setFile(actived);
       setMessages(actived?.messages ?? []);
       if (actived?.file) {

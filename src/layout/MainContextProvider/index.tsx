@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 import React, { createContext, SetStateAction, useEffect, useState, useContext } from "react";
+import * as uuid from "uuid";
 import { AuthContext } from "../AuthContextProvider";
 
 type DriveFileType = {
@@ -122,7 +123,23 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
       }
       setIsLoading(false);
       const savedFiles = typeof window !== "undefined" ? JSON.parse(`${localStorage.getItem("files")}`) : [];
-      setFiles(savedFiles ?? []);
+      if (savedFiles?.length) {
+        setFiles(savedFiles ?? []);
+      } else {
+        const uid = uuid.v4();
+        const newObj = {
+          order: 1,
+          name: "New",
+          uid: uid,
+          file: undefined,
+          ip: "",
+          s3_url: "",
+          active: true,
+          messages: [],
+          isEmbedded: false,
+        };
+        setFiles([newObj]);
+      }
     } catch (error: any) {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");

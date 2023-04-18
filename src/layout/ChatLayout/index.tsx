@@ -36,6 +36,7 @@ const ChatLayout: React.FC = () => {
   const [question, setQuestion] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [showSaveErroModal, setShowSaveErrorModal] = useState(false);
+  const [erroMsg, setErrorMessage] = useState("");
   const [file, setFile] = useState<FileType>();
   const [messages, setMessages] = useState<MessageItem[]>([]);
 
@@ -98,7 +99,9 @@ const ChatLayout: React.FC = () => {
   async function generateEmbedding(sentenceList: any[]) {
     try {
       if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
-        toast(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
+        setErrorMessage(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
+        setShowSaveErrorModal(true);
+        return;
       }
       setLoading(true);
       let uid = localStorage.getItem("uid");
@@ -309,7 +312,7 @@ const ChatLayout: React.FC = () => {
 
   return (
     <div className="relative w-full h-full md:flex">
-      <FileTab loading={loading} setShowSaveErrorModal={setShowSaveErrorModal} />
+      <FileTab loading={loading} setShowSaveErrorModal={setShowSaveErrorModal} setErrorMessage={setErrorMessage} />
       {file && (
         <div
           className={`relative ${
@@ -414,7 +417,7 @@ const ChatLayout: React.FC = () => {
       </Modal>
       <Modal isOpen={showSaveErroModal} setIsOpen={setShowSaveErrorModal}>
         <div className="w-full max-w-lg text-bgRadialEnd">
-          <p>You should login or upgrade plan to save this history</p>
+          <p className="text-center">{erroMsg}</p>
           <div className="flex justify-center gap-5 mt-5">
             <Link href="/plan" className="px-4 py-2 rounded-md text-bgRadialEnd bg-third">
               Go to Plan
@@ -423,7 +426,7 @@ const ChatLayout: React.FC = () => {
               className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
               onClick={() => setShowSaveErrorModal(false)}
             >
-              Cancel
+              Close
             </button>
           </div>
         </div>

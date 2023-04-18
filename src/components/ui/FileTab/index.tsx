@@ -10,9 +10,10 @@ import Modal from "../../basic/Modal";
 type FileTabProps = {
   loading: boolean;
   setShowSaveErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal }) => {
+const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setErrorMessage }) => {
   const { tokens } = useContext(AuthContext);
   const { files, setFiles, setShowPdf, setRecent } = useContext(MainContext);
   const [shwoPopUp, setShowPopUp] = useState(false);
@@ -70,6 +71,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal }) => 
   const saveHistory = async (selected: FileType) => {
     if (!tokens) {
       setShowSaveErrorModal(true);
+      setErrorMessage("You should login or upgrade plan to save this history");
       return;
     }
 

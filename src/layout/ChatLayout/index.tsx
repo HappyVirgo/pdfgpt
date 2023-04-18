@@ -100,19 +100,18 @@ const ChatLayout: React.FC = () => {
   }, [showSetting]);
 
   async function generateEmbedding(sentenceList: any[]) {
+    if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
+      setErrorMessage(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
+      setShowSaveErrorModal(true);
+      return;
+    }
+
+    const apiKey = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "";
+    if (!apiKey) {
+      setShowSetting(true);
+      return;
+    }
     try {
-      if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
-        setErrorMessage(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
-        setShowSaveErrorModal(true);
-        return;
-      }
-
-      const apiKey = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "";
-      if (!apiKey) {
-        setShowSetting(true);
-        return;
-      }
-
       setLoading(true);
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {

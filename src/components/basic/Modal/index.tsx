@@ -10,7 +10,7 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ isOpen, setIsOpen, children, title }) => {
   return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
+    <Dialog open={isOpen} onClose={() => {}} className="relative z-50">
       <div className="fixed inset-0 bg-black/60" aria-hidden="true" />
       <div className="fixed inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-full">

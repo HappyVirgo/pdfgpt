@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../components/ui/Sidebar";
 import Modal from "../../components/basic/Modal";
@@ -17,6 +17,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     if (value) {
       if (typeof window !== "undefined") localStorage.setItem("settings", JSON.stringify({ apiKey: value }));
       setShowSetting(false);
+    } else {
+      toast("You should input apikey");
     }
   };
 

@@ -286,6 +286,9 @@ const Sidebar = () => {
                 </div>
               ))}
             </div>
+            <div className="text-xs transition-all text-center mt-3 duration-300 cursor-pointer hover:text-white text-darkText">
+              <Link href="/terms">Terms & Policy</Link>
+            </div>
           </div>
         </div>
         <div className="justify-center hidden w-full xl:hidden md:flex">
@@ -353,7 +356,151 @@ const Sidebar = () => {
         </div>
       </Modal>
       <Drawer isOpen={showDrawer} setIsOpen={setShowDrawer}>
-        <div className="flex flex-col justify-between w-full h-full mx-auto overflow-auto text-white"></div>
+        <div className="flex-col h-full justify-between flex w-full px-5 overflow-auto text-white xl:hidden">
+          <div className="xl:mx-auto space-y-2 text-white text-md font-base">
+            <button onClick={() => push("/")} className="flex items-center gap-3 hover:text-white">
+              <HomeIcon className="w-6" />
+              Home
+            </button>
+            <button onClick={addNewDocument} className="flex items-center gap-3 hover:text-white">
+              <DocumentPlusIcon className="w-6" />
+              New PDF
+            </button>
+            <button
+              onClick={() => {
+                setShowPdf((prev) => !prev);
+              }}
+              className="flex items-center gap-3 hover:text-white disabled:text-darkText disabled:cursor-not-allowed"
+            >
+              {!showPdf ? (
+                <>
+                  <EyeIcon className="w-6" />
+                  Show PDF
+                </>
+              ) : (
+                <>
+                  <EyeSlashIcon className="w-6" />
+                  Hide PDF
+                </>
+              )}
+            </button>
+            <button className="flex items-center gap-3 hover:text-white" onClick={() => setShowSetting(true)}>
+              <KeyIcon className="w-6" />
+              Change API Key
+            </button>
+            <button className="flex items-center gap-3 hover:text-white" onClick={() => push("/plan")}>
+              <CurrencyDollarIcon className="w-6" />
+              Pricing
+            </button>
+            {user && (
+              <>
+                <Accordion title="Recent">
+                  <div className="w-32 ml-6 text-sm">
+                    {recent.map((item, index) => (
+                      <button
+                        key={index}
+                        className="py-0.5 cursor-pointer w-full gap-1 flex items-center"
+                        onClick={() => loadHistory(item)}
+                      >
+                        <div className="flex-none">
+                          <DocumentTextIcon className="w-5" />
+                        </div>
+                        <span className="flex-1 truncate whitespace-nowrap">{item?.name}</span>
+                        <a
+                          className="flex-none"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await deleteHistory(item);
+                          }}
+                        >
+                          <TrashIcon className="w-5" />
+                        </a>
+                      </button>
+                    ))}
+                  </div>
+                </Accordion>
+              </>
+            )}
+          </div>
+          <div className="mt-10 text-md font-base">
+            <button
+              onClick={toggleThemeHander}
+              className="flex items-center gap-3 mx-auto transition-all duration-300 hover:text-white text-darkText"
+            >
+              {!isDarkTheme ? <MoonIcon className="w-5" /> : <SunIcon className="w-6" />}
+              {isDarkTheme ? "Light mode" : "Dark mode"}
+            </button>
+            {user ? (
+              <div className="relative w-full py-3 mt-10 text-center text-white transition-all duration-300 rounded-full cursor-pointer bg-bgRadialEnd">
+                <div className="absolute -translate-y-1/2 top-1/2 left-1">
+                  <Image alt="avatar" src={user.picture} width={40} height={40} className="rounded-full"></Image>
+                </div>
+                <div className="ml-2">
+                  <p>{user.name}</p>
+                </div>
+                <div className="absolute top-0 right-4">
+                  <Menu>
+                    <Menu.Button className="w-full px-2 py-2 text-right text-md">
+                      <EllipsisHorizontalIcon className="w-8" />
+                    </Menu.Button>
+                    <Menu.Items className="absolute right-0 p-2 text-sm text-right transform -translate-y-full rounded-lg shadow-lg w-fit bg-bgRadialStart top-4">
+                      <Menu.Item>
+                        <Link href="/profile">
+                          <div className="flex items-center gap-2 px-2 pt-1 pb-2">
+                            <UserIcon className="w-5" />
+                            Profile
+                          </div>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <button onClick={logout} className="flex items-center gap-2 px-2 pt-1 pb-2">
+                          <ArrowRightOnRectangleIcon className="w-5" />
+                          Logout
+                        </button>
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Menu>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => login()}
+                className="relative w-full py-3 mt-10 text-center text-white transition-all duration-300 bg-transparent border rounded-full cursor-pointer"
+              >
+                {isLoading ? (
+                  <ScaleLoader color="#A5D7E8" loading={isLoading} width={2} height={16} />
+                ) : (
+                  <>
+                    Login
+                    <div className="absolute -translate-y-1/2 right-2 top-1/2">
+                      <GoogleIcon />
+                    </div>
+                  </>
+                )}
+              </button>
+            )}
+            <div className="flex justify-between w-full mt-3 itmes-center">
+              {[
+                { link: "https://discord.gg/wQpAvefeqW", label: "Discord" },
+                { link: "https://twitter.com/pdfgpt", label: "Twitter" },
+                { link: "https://discord.gg/wQpAvefeqW", label: "Report Bug" },
+                { link: "#", label: "Contact Us", onClick: () => setShowContactModal(true) },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="text-xs transition-all duration-300 cursor-pointer hover:text-white text-darkText"
+                >
+                  <a href={item.link} onClick={item?.onClick}>
+                    {item.label}
+                  </a>
+                </div>
+              ))}
+            </div>
+            <div className="text-xs transition-all text-center mt-3 duration-300 cursor-pointer hover:text-white text-darkText">
+              <Link href="/terms">Terms & Policy</Link>
+            </div>
+          </div>
+        </div>
       </Drawer>
     </Fragment>
   );

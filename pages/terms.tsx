@@ -78,43 +78,8 @@ export default function Plan() {
           <div className="w-full h-full md:flex">
             <div className="w-full h-full py-10 overflow-auto transition-all duration-300 shadow-lg  dark:bg-bgRadialEnd bg-lightText dark:bg-gradient-radial xl:py-20">
               <div className="w-full mt-8 2xl:mt-0 xl:mt-0 md:mt-8 sm:mt-8">
-                <p className="px-4 mt-12 text-2xl text-center 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12">
-                  Subscribe Now! - Because You Deserve More Than Just a One-Night Stand with PdfGPT
-                </p>
-                <div className="flex items-center justify-center my-10">
-                  <p className={`mr-6 text-base font-medium ${isChecked ? "text-slate-400" : "dark:text-white"}`}>
-                    Monthly
-                  </p>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      value=""
-                      className="sr-only peer"
-                      checked={isChecked}
-                      onChange={handleChange}
-                    />
-                    <div className="w-12 h-6 p-2 rounded-full bg-blue-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-blue-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-blue-600 peer-checked:bg-blue-600"></div>
-                  </label>
-                  <p className={`ml-6 text-base font-medium ${isChecked ? "dark:text-white" : "text-slate-400"}`}>
-                    Annual
-                  </p>
-                </div>
+                <p className="px-4 mt-12 text-2xl text-center 2xl:mt-0 xl:mt-0 md:mt-0 sm:mt-12">Terms & Policy</p>
               </div>
-              {loading ? (
-                <div className="flex flex-wrap justify-center gap-4 px-10">
-                  <BeatLoader color="white" />
-                </div>
-              ) : (
-                <div className="flex flex-wrap justify-center gap-4 px-10">
-                  {plans?.map((item: any, index: number) => (
-                    <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 2xl:w-1/4">
-                      <div className="flex justify-center">
-                        <PlanCardDetail data={item} isAnnual={isChecked} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </MainLayout>

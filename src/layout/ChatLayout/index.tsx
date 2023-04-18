@@ -23,7 +23,8 @@ import Link from "next/link";
 
 const ChatLayout: React.FC = () => {
   const { tokens, user } = useContext(AuthContext);
-  const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, pageNum } = useContext(MainContext);
+  const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, pageNum, setRecent } =
+    useContext(MainContext);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<any>();
   const sentenceRef = useRef<string[]>();
@@ -135,6 +136,12 @@ const ChatLayout: React.FC = () => {
               Authorization: `Bearer ${tokens?.accessToken}`,
             },
           });
+          const history = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
+            headers: {
+              Authorization: `Bearer ${tokens?.accessToken}`,
+            },
+          });
+          setRecent(history?.data?.documents ?? []);
           toast("File upload is succed");
         } catch (error) {
           toast("File upload is faild");

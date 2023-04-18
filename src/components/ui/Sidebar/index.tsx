@@ -116,6 +116,12 @@ const Sidebar = () => {
           Authorization: `Bearer ${tokens?.accessToken}`,
         },
       });
+      const history = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      });
+      setRecent(history?.data?.documents ?? []);
       setFiles((prev) => [...prev.filter((item) => item.uid !== selected.uid)]);
       toast("History is deleted");
     } catch (error: any) {

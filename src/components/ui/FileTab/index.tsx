@@ -14,7 +14,7 @@ type FileTabProps = {
 
 const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal }) => {
   const { tokens } = useContext(AuthContext);
-  const { files, setFiles, setShowPdf } = useContext(MainContext);
+  const { files, setFiles, setShowPdf, setRecent } = useContext(MainContext);
   const [shwoPopUp, setShowPopUp] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileType>();
   const addNewDocument = () => {
@@ -80,6 +80,9 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal }) => 
 
     try {
       const formData = new FormData();
+      if (selected.file) {
+        formData.append("file", selected.file);
+      }
       formData.append("name", `${selected.name}`);
       formData.append("uid", `${selected.uid}`);
       formData.append("messages", JSON.stringify(selected.messages));
@@ -88,6 +91,12 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal }) => 
           Authorization: `Bearer ${tokens?.accessToken}`,
         },
       });
+      const history = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      });
+      setRecent(history?.data?.documents ?? []);
       toast("History is saved");
     } catch (error) {
       toast("Saving is faild");

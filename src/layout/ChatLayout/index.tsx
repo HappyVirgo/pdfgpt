@@ -100,8 +100,11 @@ const ChatLayout: React.FC = () => {
         toast(`Can't be processed, pdf has more than ${user?.Plan.pages ?? 120} pages`);
       }
       setLoading(true);
-      const uid = uuid.v4();
-      localStorage.setItem("uid", uid);
+      let uid = localStorage.getItem("uid");
+      if (!uid) {
+        uid = uuid.v4();
+        localStorage.setItem("uid", uid);
+      }
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/embedding`, {
           sentence_list: sentenceList,

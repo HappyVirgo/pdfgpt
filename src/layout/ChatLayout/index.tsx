@@ -72,7 +72,9 @@ const ChatLayout: React.FC = () => {
         setShowPdf(false);
       }
     }
-    localStorage.setItem("files", JSON.stringify(files));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("files", JSON.stringify(files));
+    }
   }, [files]);
 
   useEffect(() => {
@@ -105,7 +107,7 @@ const ChatLayout: React.FC = () => {
         return;
       }
       setLoading(true);
-      let uid = localStorage.getItem("uid");
+      let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {
         uid = uuid.v4();
         localStorage.setItem("uid", uid);

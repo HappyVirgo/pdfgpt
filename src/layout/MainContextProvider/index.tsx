@@ -115,8 +115,8 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         const { data } = await axios.post("api/auto_login", { token, google_token });
         setUser(data?.user);
         setTokens(data?.tokens);
-        setRecent(data?.recent);
-        setDriveFiles(data?.files);
+        setRecent(data?.recent ?? []);
+        setDriveFiles(data?.files ?? []);
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
       }

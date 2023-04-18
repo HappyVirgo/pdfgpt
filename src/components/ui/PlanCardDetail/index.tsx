@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import StarSvg from "../../../assets/svg/star.svg";
 import Lightning1 from "../../../assets/svg/lightning1.svg";
 import Lightning2 from "../../../assets/svg/lightning2.svg";
@@ -16,12 +16,22 @@ type PlanCardDetailProps = {
 };
 
 const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
+  console.log("data: ", data);
   const [loading, setLoading] = useState(false);
+  const [active, setActive] = useState(false);
   const { user, tokens, setUser, setTokens } = useContext(AuthContext);
   const { setDriveFiles, setRecent } = useContext(MainContext);
+  useEffect(() => {
+    if (user) {
+      setActive(
+        user?.Subscription?.stripe_product_id === (isAnnual ? data.stripe_product_annual_id : data.stripe_product_id)
+      );
+    }
+  }, [isAnnual]);
+
   const handlePay = async () => {
     setLoading(true);
-    if (user?.current_plan_id === data.id) {
+    if (active) {
       try {
         const { data: res } = await axios.delete(
           `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/subscribe`,
@@ -106,11 +116,11 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
             <button
               type="button"
               className={`w-full flex items-center justify-center gap-2 p-3 my-10 text-white rounded-md ${
-                user?.current_plan_id === data.id ? "bg-red-400" : "bg-purple"
+                active ? "bg-red-400" : "bg-purple"
               }`}
               onClick={handlePay}
             >
-              {user?.current_plan_id === data.id ? "Cancel Plan" : "Pay now"}
+              {active ? "Cancel Plan" : user.current_plan_id === 1 ? "Pay Now" : "Upgrade Plan"}
               {loading && <ScaleLoader color="#A5D7E8" loading={loading} width={2} height={16} />}
             </button>
           ) : (

@@ -19,8 +19,21 @@ export type UserType = {
     query: number;
     size: number;
     users: number;
-    stripe_product_annual_id?: string
+    stripe_product_annual_id?: string;
     stripe_product_id?: string;
+  };
+  Subscription?: {
+    id: number;
+    user_id: number;
+    end_date: string;
+    plan_id: string;
+    start_date: string;
+    stripe_product_id?: string;
+    stripe_subscription_id: string;
+    trial_period_end: string;
+    trial_period_start: string;
+    createdAt: string;
+    updatedAt: string;
   };
 };
 
@@ -52,7 +65,7 @@ interface AuthContextProviderProps {
 
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserType | null>(null);
-  console.log('user: ', user);
+  console.log("user: ", user);
   const [tokens, setTokens] = useState<TokenType | null>(null);
   return <AuthContext.Provider value={{ user, setUser, tokens, setTokens }}>{children}</AuthContext.Provider>;
 };

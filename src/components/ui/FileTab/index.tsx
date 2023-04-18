@@ -108,8 +108,8 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setEr
   return (
     <div className="absolute left-0 z-20 flex items-center w-full h-10 overflow-x-auto text-white bg-primary top-12 md:top-0">
       {files
-        .sort((a, b) => a?.order - b?.order)
-        .map((item, index) => (
+        ?.sort((a, b) => a?.order - b?.order)
+        ?.map((item, index) => (
           <button
             disabled={loading}
             key={index}

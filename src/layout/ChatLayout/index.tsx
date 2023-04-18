@@ -42,7 +42,7 @@ const ChatLayout: React.FC = () => {
 
   function scrollToPage(num: number) {
     if (pdfRef?.current?.pages?.length > 0) {
-      pdfRef?.current?.pages[num - 1]?.scrollIntoView();
+      pdfRef?.current?.pages[num - 1]?.scrollIntoView({ behavior: "smooth" });
     }
   }
 

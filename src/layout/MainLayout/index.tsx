@@ -47,7 +47,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <button className="w-24 p-2 rounded-md bg-third text-primary" onClick={() => onSaveSettings(apikey)}>
               Save
             </button>
-            <button className="w-24 p-2 rounded-md bg-third text-primary" onClick={() => setShowSetting(false)}>
+            <button
+              className="w-24 p-2 rounded-md bg-third text-primary"
+              onClick={() => {
+                if (apikey) {
+                  setShowSetting(false);
+                } else {
+                  toast("You should input apikey");
+                }
+              }}
+            >
               Cancel
             </button>
           </div>

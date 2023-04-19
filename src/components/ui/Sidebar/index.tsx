@@ -57,6 +57,27 @@ const Sidebar = () => {
     toggleThemeHandler();
   };
 
+  const autoFileSave = async (selected: FileType) => {
+    const formData = new FormData();
+    if (selected.file) {
+      formData.append("file", selected.file);
+    }
+    formData.append("name", `${selected.name}`);
+    formData.append("uid", `${selected.uid}`);
+    formData.append("messages", JSON.stringify(selected.messages));
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+      headers: {
+        Authorization: `Bearer ${tokens?.accessToken}`,
+      },
+    });
+    const history = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
+      headers: {
+        Authorization: `Bearer ${tokens?.accessToken}`,
+      },
+    });
+    setRecent(history?.data?.documents ?? []);
+  };
+
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setIsLoading(true);
@@ -67,6 +88,15 @@ const Sidebar = () => {
         setDriveFiles(data?.files ?? []);
         setRecent(data?.recent ?? []);
         setTokens(data?.tokens);
+
+        if (files.length > 0) {
+          await Promise.all(
+            files.map(async (file) => {
+              await autoFileSave(file);
+            })
+          );
+        }
+
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
         setIsLoading(false);
@@ -292,7 +322,7 @@ const Sidebar = () => {
                 </div>
               ))}
             </div>
-            <div className="text-xs transition-all text-center mt-3 duration-300 cursor-pointer hover:text-white text-darkText">
+            <div className="mt-3 text-xs text-center transition-all duration-300 cursor-pointer hover:text-white text-darkText">
               <Link href="/terms">Terms & Policy</Link>
             </div>
           </div>
@@ -362,8 +392,8 @@ const Sidebar = () => {
         </div>
       </Modal>
       <Drawer isOpen={showDrawer} setIsOpen={setShowDrawer}>
-        <div className="flex-col h-full justify-between flex w-full px-5 overflow-auto text-white xl:hidden">
-          <div className="xl:mx-auto space-y-2 text-white text-md font-base">
+        <div className="flex flex-col justify-between w-full h-full px-5 overflow-auto text-white xl:hidden">
+          <div className="space-y-2 text-white xl:mx-auto text-md font-base">
             <button onClick={() => push("/")} className="flex items-center gap-3 hover:text-white">
               <HomeIcon className="w-6" />
               Home
@@ -502,7 +532,7 @@ const Sidebar = () => {
                 </div>
               ))}
             </div>
-            <div className="text-xs transition-all text-center mt-3 duration-300 cursor-pointer hover:text-white text-darkText">
+            <div className="mt-3 text-xs text-center transition-all duration-300 cursor-pointer hover:text-white text-darkText">
               <Link href="/terms">Terms & Policy</Link>
             </div>
           </div>

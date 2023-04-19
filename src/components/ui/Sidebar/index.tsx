@@ -75,6 +75,16 @@ const Sidebar = () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    localStorage.setItem(
+      "files",
+      JSON.stringify(
+        files.map((item, i) => {
+          console.log(">>>", history.data.documents[i].s3_link)
+          return {...item,
+          s3_url: history.data.documents[i].s3_link}
+        })
+      )
+    );
     setRecent(history?.data?.documents ?? []);
 
     const uploadedFile = data?.file as DocumentType;

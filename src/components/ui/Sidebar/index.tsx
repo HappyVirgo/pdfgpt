@@ -97,6 +97,14 @@ const Sidebar = () => {
           );
         }
 
+        setFiles((prev) => {
+          return prev.map((item) => ({
+            ...item,
+            s3_url: recent.find((doc: any) => doc.uid === item.uid)?.s3_link
+              ? recent.find((doc: any) => doc.uid === item.uid)?.s3_link
+              : item.s3_url,
+          }));
+        });
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
         setIsLoading(false);

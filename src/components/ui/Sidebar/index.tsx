@@ -75,6 +75,19 @@ const Sidebar = () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    if (typeof window === "undefined") {
+      localStorage.setItem(
+        "files",
+        JSON.stringify(
+          files.map((item) => ({
+            ...item,
+            s3_url: history.data.documents.find((doc: any) => doc.uid === item.uid)?.s3_link
+              ? history.data.documents.find((doc: any) => doc.uid === item.uid)?.s3_link
+              : item.s3_url,
+          }))
+        )
+      );
+    }
     setRecent(history?.data?.documents ?? []);
   };
 
@@ -97,14 +110,6 @@ const Sidebar = () => {
           );
         }
 
-        setFiles((prev) => {
-          return prev.map((item) => ({
-            ...item,
-            s3_url: recent.find((doc: any) => doc.uid === item.uid)?.s3_link
-              ? recent.find((doc: any) => doc.uid === item.uid)?.s3_link
-              : item.s3_url,
-          }));
-        });
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");
         localStorage.setItem("accessToken", data?.tokens?.accessToken ?? "");
         setIsLoading(false);

@@ -65,7 +65,7 @@ const Sidebar = () => {
     formData.append("name", `${selected.name}`);
     formData.append("uid", `${selected.uid}`);
     formData.append("messages", JSON.stringify(selected.messages));
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+    const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -75,20 +75,17 @@ const Sidebar = () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (typeof window === "undefined") {
-      localStorage.setItem(
-        "files",
-        JSON.stringify(
-          files.map((item) => ({
-            ...item,
-            s3_url: history.data.documents.find((doc: any) => doc.uid === item.uid)?.s3_link
-              ? history.data.documents.find((doc: any) => doc.uid === item.uid)?.s3_link
-              : item.s3_url,
-          }))
-        )
-      );
-    }
     setRecent(history?.data?.documents ?? []);
+
+    const uploadedFile = data?.file as DocumentType;
+    setFiles((prev) => {
+      const newFiles = prev;
+      const index = newFiles.findIndex((item) => item.uid === uploadedFile.uid);
+      if (index > -1) {
+        newFiles[index].s3_url = uploadedFile.s3_link;
+      }
+      return newFiles;
+    });
   };
 
   const login = useGoogleLogin({

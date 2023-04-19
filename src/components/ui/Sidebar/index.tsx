@@ -57,7 +57,7 @@ const Sidebar = () => {
     toggleThemeHandler();
   };
 
-  const autoFileSave = async (selected: FileType) => {
+  const autoFileSave = async (selected: FileType, token: string) => {
     const formData = new FormData();
     if (selected.file) {
       formData.append("file", selected.file);
@@ -67,12 +67,12 @@ const Sidebar = () => {
     formData.append("messages", JSON.stringify(selected.messages));
     await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
       headers: {
-        Authorization: `Bearer ${tokens?.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const history = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
       headers: {
-        Authorization: `Bearer ${tokens?.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     setRecent(history?.data?.documents ?? []);
@@ -92,7 +92,7 @@ const Sidebar = () => {
         if (files.length > 0) {
           await Promise.all(
             files.map(async (file) => {
-              await autoFileSave(file);
+              await autoFileSave(file, data?.tokens?.accessToken);
             })
           );
         }

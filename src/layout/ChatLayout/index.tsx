@@ -62,7 +62,7 @@ const ChatLayout: React.FC = () => {
       };
       setFiles([newObj]);
       setFile(newObj);
-      localStorage.setItem('activeTabChatUid', uid)
+      localStorage.setItem("activeTabChatUid", uid);
     } else {
       const actived: any = files?.find((item) => item.active);
       setFile(actived);
@@ -72,7 +72,7 @@ const ChatLayout: React.FC = () => {
       } else {
         setShowPdf(false);
       }
-      localStorage.setItem('activeTabChatUid', `${actived.uid}`)
+      localStorage.setItem("activeTabChatUid", `${actived.uid}`);
     }
     if (typeof window !== "undefined") {
       localStorage.setItem("files", JSON.stringify(files));
@@ -263,9 +263,9 @@ const ChatLayout: React.FC = () => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        const fileItemId = localStorage.getItem('onSendChatUid');
-        const activeid = localStorage.getItem('activeTabChatUid')
-        
+        const fileItemId = localStorage.getItem("onSendChatUid");
+        const activeid = localStorage.getItem("activeTabChatUid");
+
         setMessages((prev) => {
           if (activeid !== fileItemId) return prev;
           return [
@@ -315,7 +315,7 @@ const ChatLayout: React.FC = () => {
       const index = prev.findIndex((item) => item.active);
       const newFiles = prev;
       if (index > -1) {
-        localStorage.setItem('onSendChatUid', `${files.find(f => f.active)?.uid}`)
+        localStorage.setItem("onSendChatUid", `${files.find((f) => f.active)?.uid}`);
         newFiles[index].messages = [
           ...prev[index].messages,
           { type: "QUESTION", message: value.trim() },
@@ -339,7 +339,8 @@ const ChatLayout: React.FC = () => {
           } h-full dark:bg-bgRadialEnd  bg-lightText dark:bg-gradient-radial duration-300 transition-all`}
         >
           <div
-            className="flex w-full h-full px-4 pt-20 pb-20 overflow-x-hidden overflow-y-auto md:pt-10 xl:pt-20" id="chatWindow"
+            className="flex w-full h-full px-4 pt-20 pb-20 overflow-x-hidden overflow-y-auto md:pt-10 xl:pt-20"
+            id="chatWindow"
             ref={chatWindowRef}
           >
             {file?.file || file?.s3_url ? (

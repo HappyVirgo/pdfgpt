@@ -79,9 +79,10 @@ const Sidebar = () => {
       "files",
       JSON.stringify(
         files.map((item, i) => {
-          console.log(">>>", history.data.documents[i].s3_link)
-          return {...item,
-          s3_url: history.data.documents[i].s3_link}
+          return {
+            ...item,
+            s3_url: history.data.documents[i].s3_link,
+          };
         })
       )
     );

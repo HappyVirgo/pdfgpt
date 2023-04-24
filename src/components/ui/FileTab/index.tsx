@@ -47,9 +47,11 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setEr
         if (activeIndex > -1) {
           newFiles[activeIndex].active = true;
         }
-
+        localStorage.setItem('activeTabChatUid', `${newFiles[activeIndex].uid}`)
         return newFiles;
       });
+      let s: any = document.getElementById('chatWindow');
+      s.scrollTop = s.scrollHeight + 300;
     }
   };
 

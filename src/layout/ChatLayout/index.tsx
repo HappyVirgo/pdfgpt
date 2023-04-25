@@ -172,7 +172,7 @@ const ChatLayout: React.FC = () => {
     const allSentenceList = [];
 
     for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-      const currentPage = await doc.getPage(pageNum);
+      const currentPage = await doc?.getPage(pageNum);
       const currentPageContent = await currentPage.getTextContent();
       const currentPageText = currentPageContent.items.map((item: any) => (item as TextItem).str).join(" ");
       allSentenceList.push({ sentence: currentPageText, pageNum });

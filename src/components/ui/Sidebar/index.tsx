@@ -111,11 +111,14 @@ const Sidebar = () => {
         setTokens(data?.tokens);
 
         if (files.length > 0) {
-          await Promise.all(
-            files.map(async (file) => {
-              await autoFileSave(file, data?.tokens?.accessToken);
-            })
-          );
+          try {
+            await Promise.all(
+              files.map(async (file) => {
+                await autoFileSave(file, data?.tokens?.accessToken);
+              })
+            );
+          } catch (error) {
+          }
         }
 
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");

@@ -63,7 +63,9 @@ const Sidebar = () => {
       formData.append("file", selected.file);
     }
     formData.append("name", `${selected.name}`);
+    formData.append("total_pages", `${selected.total_pages}`);
     formData.append("uid", `${selected.uid}`);
+    formData.append("ip", `${selected.uid}`);
     formData.append("messages", JSON.stringify(selected.messages));
     const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
       headers: {
@@ -111,11 +113,14 @@ const Sidebar = () => {
         setTokens(data?.tokens);
 
         if (files.length > 0) {
-          await Promise.all(
-            files.map(async (file) => {
-              await autoFileSave(file, data?.tokens?.accessToken);
-            })
-          );
+          try {
+            await Promise.all(
+              files.map(async (file) => {
+                await autoFileSave(file, data?.tokens?.accessToken);
+              })
+            );
+          } catch (error) {
+          }
         }
 
         localStorage.setItem("refreshToken", data?.tokens?.refreshToken ?? "");

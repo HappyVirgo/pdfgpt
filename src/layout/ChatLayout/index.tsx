@@ -123,7 +123,7 @@ const ChatLayout: React.FC = () => {
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/embedding`, {
           sentence_list: sentenceList,
-          ip: user ? user.id : uid,
+          ip: file?.uid,
           file_name: `${file?.uid}-${file?.name}`,
           apiKey: apiKey,
         });
@@ -231,7 +231,7 @@ const ChatLayout: React.FC = () => {
           query: value,
           apiKey: settings.current?.apiKey,
           matches: 5,
-          ip: user ? user.id : localStorage.getItem("uid"),
+          ip: file?.uid,
           fileName: `${file?.uid}-${file?.name}`,
         },
       });

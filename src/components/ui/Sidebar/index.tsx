@@ -93,7 +93,7 @@ const Sidebar = () => {
     const uploadedFile = data?.file as DocumentType;
     setFiles((prev) => {
       const newFiles = prev;
-      const index = newFiles.findIndex((item) => item.uid === uploadedFile.uid);
+      const index = newFiles.findIndex((item) => item.uid === uploadedFile?.uid);
       if (index > -1) {
         newFiles[index].s3_url = uploadedFile.s3_link;
       }

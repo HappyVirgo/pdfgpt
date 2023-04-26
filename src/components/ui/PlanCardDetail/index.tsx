@@ -30,13 +30,14 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
 
   const handlePay = async () => {
     setLoading(true);
+    const token: any = localStorage.getItem("accessToken");
     if (active) {
       try {
         const { data: res } = await axios.delete(
           `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/subscribe`,
           {
             headers: {
-              Authorization: `Bearer ${tokens?.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -56,7 +57,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
           },
           {
             headers: {
-              Authorization: `Bearer ${tokens?.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );

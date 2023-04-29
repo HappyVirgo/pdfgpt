@@ -49,6 +49,7 @@ const Sidebar = () => {
   } = useContext(MainContext);
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPopUp, setShowPopUp] = useState(false);
   const { user, setUser, setTokens, tokens } = useContext(AuthContext);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -135,11 +136,21 @@ const Sidebar = () => {
   });
 
   const logout = () => {
+    setFiles([]);
     setUser(null);
     setTokens(null);
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
     push("/");
+  }
+
+  const checkUnsaveHistory = () => {
+    const is = files.find(f => f.file || f.messages?.length > 0 || f.s3_url);
+    if (is) {
+      setShowPopUp(true);
+    } else {
+      logout()
+    }
   };
 
   const loadHistory = async (selected: DocumentType) => {
@@ -305,7 +316,7 @@ const Sidebar = () => {
                         </Link>
                       </Menu.Item>
                       <Menu.Item>
-                        <button onClick={logout} className="flex items-center gap-2 px-2 pt-1 pb-2">
+                        <button onClick={checkUnsaveHistory} className="flex items-center gap-2 px-2 pt-1 pb-2">
                           <ArrowRightOnRectangleIcon className="w-5" />
                           Logout
                         </button>
@@ -382,6 +393,30 @@ const Sidebar = () => {
           )}
         </button>
       </div>
+      <Modal isOpen={showPopUp} setIsOpen={setShowPopUp} title="You have unsaved history">
+        <div className="mt-5 space-y-2 text-center text-bgRadialEnd">
+          <p>Are you sure? you have unsave history</p>
+          <div className="flex items-center justify-center gap-5">
+            <button
+              className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
+              onClick={async () => {
+                logout();
+                setShowPopUp(false);
+              }}
+            >
+              okay
+            </button>
+            <button
+              className="px-4 py-2 rounded-md text-bgRadialEnd bg-third"
+              onClick={() => {
+                setShowPopUp(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
       <Modal isOpen={showContactModal} setIsOpen={setShowContactModal} title="Contact Us">
         <div className="mt-5 space-y-2">
           <p>
@@ -515,7 +550,7 @@ const Sidebar = () => {
                         </Link>
                       </Menu.Item>
                       <Menu.Item>
-                        <button onClick={logout} className="flex items-center gap-2 px-2 pt-1 pb-2">
+                        <button onClick={checkUnsaveHistory} className="flex items-center gap-2 px-2 pt-1 pb-2">
                           <ArrowRightOnRectangleIcon className="w-5" />
                           Logout
                         </button>

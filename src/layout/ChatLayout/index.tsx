@@ -72,7 +72,7 @@ const ChatLayout: React.FC = () => {
       } else {
         setShowPdf(false);
       }
-      localStorage.setItem("activeTabChatUid", `${actived.uid}`);
+      localStorage.setItem("activeTabChatUid", `${actived?.uid}`);
     }
     if (typeof window !== "undefined") {
       localStorage.setItem("files", JSON.stringify(files));
@@ -414,7 +414,7 @@ const ChatLayout: React.FC = () => {
               ref={pdfRef}
               file={file?.s3_url ? file?.s3_url : file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={() => {}}
+              onLoadError={(error) => { window.location.reload() }}
             >
               {Array.from(new Array(file.total_pages), (_el, index) => (
                 <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} />

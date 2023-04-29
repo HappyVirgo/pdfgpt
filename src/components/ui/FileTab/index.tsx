@@ -16,7 +16,7 @@ type FileTabProps = {
 const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setErrorMessage }) => {
   const { tokens } = useContext(AuthContext);
   const { files, setFiles, setShowPdf, setRecent } = useContext(MainContext);
-  const [shwoPopUp, setShowPopUp] = useState(false);
+  const [showPopUp, setShowPopUp] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileType>();
   const addNewDocument = () => {
     if (files.length === 0 || files.at(-1)?.file || files.at(-1)?.s3_url) {
@@ -124,7 +124,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setEr
             <a
               onClick={(e) => {
                 e.stopPropagation();
-                if (item.file || item.messages.length > 0 || item.s3_url) {
+                if (item.file || item.messages?.length > 0 || item.s3_url) {
                   setSelectedFile(item);
                   setShowPopUp(true);
                 } else {
@@ -151,7 +151,7 @@ const FileTab: React.FC<FileTabProps> = ({ loading, setShowSaveErrorModal, setEr
       <button className="px-2 disabled:text-darkText disabled:cursor-not-allowed" onClick={addNewDocument}>
         <DocumentPlusIcon className="w-5" />
       </button>
-      <Modal isOpen={shwoPopUp} setIsOpen={setShowPopUp} title="You have unsaved history">
+      <Modal isOpen={showPopUp} setIsOpen={setShowPopUp} title="You have unsaved history">
         <div className="mt-5 space-y-2 text-center text-bgRadialEnd">
           <p>You have unsaved history, are you sure you want to close tab</p>
           <div className="flex items-center justify-center gap-5">

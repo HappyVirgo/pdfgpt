@@ -108,7 +108,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
       {data.name !== "Basic" && (
         <div>
           <div className="flex items-center justify-center pl-6 mt-8 text-3xl font-medium">
-            ${isAnnual ? data.price * 10 : data.price}
+            {data.currency === 'inr' ? '₹' : '$'}{isAnnual ? data.price * 10 : data.price}
             <hr className={`w-0.5 h-6 mx-6 ${data.name === "Ultimate" ? "bg-black" : "bg-white"}`} />
             <span className="text-xl font-normal">{isAnnual ? "Year" : "Month"}</span>
           </div>

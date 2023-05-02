@@ -292,7 +292,7 @@ const ChatLayout: React.FC = () => {
             {
               ...prev.at(-1),
               type: "REPLY",
-              message: prev.at(-1)?.message + chunkValue,
+              message: (prev.at(-1)?.message ?? '') + chunkValue,
               references: embedRes.data,
             },
           ];
@@ -307,7 +307,7 @@ const ChatLayout: React.FC = () => {
               {
                 ...prev[index].messages.at(-1),
                 type: "REPLY",
-                message: prev[index].messages.at(-1)?.message + chunkValue,
+                message: prev[index].messages.at(-1)?.message ?? '' + chunkValue,
                 references: embedRes.data,
               },
             ];
@@ -329,17 +329,17 @@ const ChatLayout: React.FC = () => {
     if (!settings.current?.apiKey) {
       return;
     }
-    setMessages((prev) => [...prev, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }]);
+    !botmsg && setMessages((prev) => [...prev, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }]);
     setFiles((prev: FileType[]) => {
       const index = prev.findIndex((item) => item.active);
       const newFiles = prev;
       if (index > -1) {
         localStorage.setItem("onSendChatUid", `${files.find((f) => f.active)?.uid}`);
-        newFiles[index].messages = [
+        !botmsg ? newFiles[index].messages = [
           ...prev[index].messages,
           { type: "QUESTION", message: value.trim() },
           { type: "REPLY", message: "" },
-        ];
+        ] : null;
       }
       return newFiles;
     });

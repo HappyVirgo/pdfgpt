@@ -61,7 +61,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </button>
           </div>
           <div className="text-center decoration-slice">
-            <a className="border-b" href="https://platform.openai.com/account/api-keys">
+            <a className="border-b" target="_blank" href="https://platform.openai.com/account/api-keys">
               Get Your API Key from here
             </a>
           </div>

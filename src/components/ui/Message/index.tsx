@@ -36,7 +36,8 @@ const Message: React.FC<MessageProps> = ({ type = "FROM_CHATGPT", message = "", 
           type === "FROM_CHATGPT" ? "bg-white dark:bg-primary" : "bg-secondary dark:bg-bgRadialStart"
         }`}
       >
-        <pre className="w-full break-words ">{<Markdown options={{forceBlock: true}} >{message}</Markdown> ?? ""}</pre>
+        <pre className="w-full break-words ">{message ?? ""}</pre>
+        {/* <pre className="w-full break-words ">{<Markdown options={{forceBlock: true}} >{message}</Markdown> ?? ""}</pre> */}
         {type === "FROM_CHATGPT" && (
           <div className="text-end">
             <Popover className="relative">

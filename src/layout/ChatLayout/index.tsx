@@ -263,8 +263,8 @@ const ChatLayout: React.FC = () => {
       });
 
       const promptData = embedRes.data?.map((d: any) => d.content).join("\n\n");
-      // const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
-      const prompt = stripIndent`${value}, Use the following text to provide an answer,Answer as markdown (including related code snippets, tables, bullet points if available): Text: ${promptData}`;
+      const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
+      // const prompt = stripIndent`${value}, Use the following text to provide an answer,Answer as markdown (including related code snippets, tables, bullet points if available): Text: ${promptData}`;
 
       const answerResponse = await fetch(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-answer`, {
         method: "POST",

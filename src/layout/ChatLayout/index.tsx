@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import * as uuid from "uuid";
 import axios from "axios";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -15,6 +15,7 @@ import Reply from "../../assets/svg/reply.svg";
 import { AuthContext } from "../AuthContextProvider";
 import { FileType, MainContext } from "../MainContextProvider";
 import { MessageItem } from "../MainContextProvider";
+import {oneLine, stripIndent} from 'common-tags'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
@@ -39,11 +40,25 @@ const ChatLayout: React.FC = () => {
   const [erroMsg, setErrorMessage] = useState("");
   const [file, setFile] = useState<FileType>();
   const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [searchText, setSearchText] = useState('');
+
 
   function scrollToPage(num: number) {
     if (pdfRef?.current?.pages?.length > 0) {
       pdfRef?.current?.pages[num - 1]?.scrollIntoView({ behavior: "smooth" });
     }
+  }
+  function highlightPattern(text: any, pattern: any) {
+    return text.replace(pattern, (value: any) => `<mark>${value}</mark>`);
+  }
+  
+  const textRenderer = useCallback(
+    (textItem: any) => highlightPattern(textItem.str, searchText),
+    [searchText]
+  );
+
+  function onChange(txt: any) {
+    setSearchText(txt);
   }
 
   useEffect(() => {
@@ -62,8 +77,9 @@ const ChatLayout: React.FC = () => {
       };
       setFiles([newObj]);
       setFile(newObj);
+      localStorage.setItem("activeTabChatUid", uid);
     } else {
-      const actived = files?.find((item) => item.active);
+      const actived: any = files?.find((item) => item.active);
       setFile(actived);
       setMessages(actived?.messages ?? []);
       if (actived?.file) {
@@ -71,6 +87,7 @@ const ChatLayout: React.FC = () => {
       } else {
         setShowPdf(false);
       }
+      localStorage.setItem("activeTabChatUid", `${actived?.uid}`);
     }
     if (typeof window !== "undefined") {
       localStorage.setItem("files", JSON.stringify(files));
@@ -78,7 +95,7 @@ const ChatLayout: React.FC = () => {
   }, [files]);
 
   useEffect(() => {
-    if (pageNum > 1) {
+    if (pageNum >= 1) {
       scrollToPage(pageNum ?? 1);
     }
   }, [pageNum]);
@@ -121,7 +138,7 @@ const ChatLayout: React.FC = () => {
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/embedding`, {
           sentence_list: sentenceList,
-          ip: user ? user.id : uid,
+          ip: file?.uid,
           file_name: `${file?.uid}-${file?.name}`,
           apiKey: apiKey,
         });
@@ -167,18 +184,21 @@ const ChatLayout: React.FC = () => {
 
   async function onDocumentLoadSuccess(doc: any) {
     const { numPages } = doc;
+    const sentenceEndSymbol = /[。.]\s+/;
     const allSentenceList = [];
 
     for (let pageNum = 1; pageNum <= numPages; pageNum++) {
       const currentPage = await doc.getPage(pageNum);
       const currentPageContent = await currentPage.getTextContent();
-      const currentPageText = currentPageContent.items.map((item: any) => (item as TextItem).str).join(" ");
-      allSentenceList.push({ sentence: currentPageText, pageNum });
+      const currentPageText = currentPageContent.items
+        .map((item: any) => (item as TextItem).str)
+        .join(' ');
+
+      const sentenceList = currentPageText.split(sentenceEndSymbol);
+      allSentenceList.push(...sentenceList.map((item: string) => ({ sentence: item, pageNum })));
     }
-    // @ts-ignore
-    sentenceRef.current = allSentenceList.filter((item) => {
-      return item.sentence;
-    });
+
+    sentenceRef.current = allSentenceList.filter(item => item.sentence);
 
     setFiles((prev: FileType[]) => {
       const newFiles = prev;
@@ -228,14 +248,15 @@ const ChatLayout: React.FC = () => {
         data: {
           query: value,
           apiKey: settings.current?.apiKey,
-          matches: 5,
-          ip: user ? user.id : localStorage.getItem("uid"),
+          matches: 15,
+          ip: file?.uid,
           fileName: `${file?.uid}-${file?.name}`,
         },
       });
 
       const promptData = embedRes.data?.map((d: any) => d.content).join("\n\n");
-      const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
+      // const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
+      const prompt = stripIndent`${value}, Use the following text to provide an answer,Answer as markdown (including related code snippets, tables, bullet points if available): Text: ${promptData}`;
 
       const answerResponse = await fetch(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-answer`, {
         method: "POST",
@@ -261,17 +282,24 @@ const ChatLayout: React.FC = () => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        setMessages((prev) => [
-          ...prev.slice(0, -1),
-          {
-            ...prev.at(-1),
-            type: "REPLY",
-            message: prev.at(-1)?.message + chunkValue,
-            references: embedRes.data,
-          },
-        ]);
+        const fileItemId = localStorage.getItem("onSendChatUid");
+        const activeid = localStorage.getItem("activeTabChatUid");
+
+        setMessages((prev) => {
+          if (activeid !== fileItemId) return prev;
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...prev.at(-1),
+              type: "REPLY",
+              message: ((prev.at(-1)?.message) ? (prev.at(-1)?.message) : '') + chunkValue,
+              references: embedRes.data,
+            },
+          ];
+        });
+
         setFiles((prev: FileType[]) => {
-          const index = prev.findIndex((item) => item.active);
+          const index = prev.findIndex((item) => item.uid === fileItemId);
           const newFiles = prev;
           if (index > -1) {
             newFiles[index].messages = [
@@ -279,7 +307,7 @@ const ChatLayout: React.FC = () => {
               {
                 ...prev[index].messages.at(-1),
                 type: "REPLY",
-                message: prev[index].messages.at(-1)?.message + chunkValue,
+                message: (prev[index].messages.at(-1)?.message ? prev[index].messages.at(-1)?.message : '') + chunkValue,
                 references: embedRes.data,
               },
             ];
@@ -301,12 +329,13 @@ const ChatLayout: React.FC = () => {
     if (!settings.current?.apiKey) {
       return;
     }
-    setMessages((prev) => [...prev, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }]);
+    !botmsg && setMessages((prev) => [...prev, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }]);
     setFiles((prev: FileType[]) => {
       const index = prev.findIndex((item) => item.active);
       const newFiles = prev;
       if (index > -1) {
-        newFiles[index].messages = [
+        localStorage.setItem("onSendChatUid", `${files.find((f) => f.active)?.uid}`);
+        if(!botmsg) newFiles[index].messages = [
           ...prev[index].messages,
           { type: "QUESTION", message: value.trim() },
           { type: "REPLY", message: "" },
@@ -330,6 +359,7 @@ const ChatLayout: React.FC = () => {
         >
           <div
             className="flex w-full h-full px-4 pt-20 pb-20 overflow-x-hidden overflow-y-auto md:pt-10 xl:pt-20"
+            id="chatWindow"
             ref={chatWindowRef}
           >
             {file?.file || file?.s3_url ? (
@@ -338,6 +368,7 @@ const ChatLayout: React.FC = () => {
                   {!!messages.length &&
                     messages.map((message, index) => (
                       <Message
+                        highlight={onChange}
                         key={index}
                         type={message?.type === "REPLY" ? "FROM_CHATGPT" : "FROM_ME"}
                         message={message?.message}
@@ -403,12 +434,18 @@ const ChatLayout: React.FC = () => {
               ref={pdfRef}
               file={file?.s3_url ? file?.s3_url : file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={() => {}}
+              onLoadError={(error) => { window.location.reload() }}
+
             >
               {Array.from(new Array(file.total_pages), (_el, index) => (
-                <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} />
+                <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} customTextRenderer={textRenderer}
+                />
               ))}
             </Document>
+            {/* <div>
+        <label htmlFor="search">Search:</label>
+        <input type="search" id="search" value={searchText} onChange={onChange} />
+      </div> */}
           </div>
         </div>
       )}

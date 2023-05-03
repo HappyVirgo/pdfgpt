@@ -26,6 +26,7 @@ export default function Plan() {
     try {
       const { data } = await axios.post("api/stripe/plan", {
         token: tokens?.accessToken,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
       setPlans(data.data.plans);
     } catch (error) {

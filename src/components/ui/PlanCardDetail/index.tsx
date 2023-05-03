@@ -30,13 +30,14 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
 
   const handlePay = async () => {
     setLoading(true);
+    const token: any = localStorage.getItem("accessToken");
     if (active) {
       try {
         const { data: res } = await axios.delete(
           `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/subscribe`,
           {
             headers: {
-              Authorization: `Bearer ${tokens?.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -56,7 +57,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
           },
           {
             headers: {
-              Authorization: `Bearer ${tokens?.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -107,7 +108,7 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
       {data.name !== "Basic" && (
         <div>
           <div className="flex items-center justify-center pl-6 mt-8 text-3xl font-medium">
-            ${isAnnual ? data.price * 10 : data.price}
+            {data.currency === 'inr' ? '₹' : '$'}{isAnnual ? data.price * 10 : data.price}
             <hr className={`w-0.5 h-6 mx-6 ${data.name === "Ultimate" ? "bg-black" : "bg-white"}`} />
             <span className="text-xl font-normal">{isAnnual ? "Year" : "Month"}</span>
           </div>

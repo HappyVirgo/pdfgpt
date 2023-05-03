@@ -10,19 +10,26 @@ const MyDropzone = () => {
   const { user } = useContext(AuthContext);
   const { setShowPdf, setFiles } = useContext(MainContext);
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if ((file?.size ?? 0) > (user?.Plan?.size ?? 10) * 1024 * 1024) {
-      toast("File size is over, you should upgrate your plan!");
-      return;
-    }
-    setFiles((prev: FileType[]) => {
-      let newFiles = prev;
-      const actived = newFiles.findIndex((item) => item.active);
-      newFiles[actived].file = file;
-      newFiles[actived].name = file.name;
-      return newFiles;
-    });
-    setShowPdf(true);
+    const file: any = acceptedFiles[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          if ((file?.size ?? 0) > (user?.Plan?.size ?? 10) * 1024 * 1024) {
+            toast("File size is over, you should upgrate your plan!");
+            return;
+          }
+          setFiles((prev: FileType[]) => {
+            let newFiles = prev;
+            const actived = newFiles.findIndex((item) => item.active);
+            newFiles[actived].file = reader.result as any;
+            newFiles[actived].name = file.name;
+            return newFiles;
+          });
+          setShowPdf(true);
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -31,7 +38,7 @@ const MyDropzone = () => {
       {...getRootProps()}
       className="flex items-center justify-center w-full bg-transparent border-none outline-none dark:bg-gradient-radial ring-0"
     >
-      <input {...getInputProps()} className="border-none outline-none ring-0" />
+      <input {...getInputProps()} className="border-none outline-none ring-0" id='fil1' />
       <div className="flex flex-col items-center justify-center">
         <UploadPattern />
         <button className="flex items-center justify-center gap-6 px-4 py-3 mt-2 font-base bg-third">

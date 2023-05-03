@@ -412,7 +412,7 @@ const ChatLayout: React.FC = () => {
                 )}
               </div>
               <p className="w-full mt-1 text-sm text-center text-semiLightText md:text-start">
-                For free version we only provide you to upload less then 1000 pages file For business purpose, Contact
+                For free version we only provide you to upload less than 1000 pages file For business purpose, Contact
                 us at pdfgpt@gmail.com
               </p>
             </div>

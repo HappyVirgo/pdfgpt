@@ -95,7 +95,7 @@ const ChatLayout: React.FC = () => {
   }, [files]);
 
   useEffect(() => {
-    if (pageNum > 1) {
+    if (pageNum >= 1) {
       scrollToPage(pageNum ?? 1);
     }
   }, [pageNum]);

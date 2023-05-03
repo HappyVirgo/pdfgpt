@@ -141,6 +141,7 @@ const ChatLayout: React.FC = () => {
           ip: file?.uid,
           file_name: `${file?.uid}-${file?.name}`,
           apiKey: apiKey,
+          user_id: uid
         });
         setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
         setbotmsg(true);
@@ -240,6 +241,12 @@ const ChatLayout: React.FC = () => {
     }
     try {
       setLoading(true);
+      let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
+      if (!uid) {
+        uid = uuid.v4();
+        localStorage.setItem("uid", uid);
+      }
+
       const embedRes = await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-embed`, {
         method: "POST",
         headers: {
@@ -251,6 +258,7 @@ const ChatLayout: React.FC = () => {
           matches: 15,
           ip: file?.uid,
           fileName: `${file?.uid}-${file?.name}`,
+          user_id: uid
         },
       });
 

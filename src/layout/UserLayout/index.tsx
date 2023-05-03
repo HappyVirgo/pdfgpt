@@ -95,7 +95,14 @@ const UserLayout: React.FC = () => {
       setIsLoading(true);
       const token = tokens?.accessToken;
       if (token) {
-        const { data } = await axios.post("api/stripe/get-customer-info", { token: token });
+        // const { data } = await axios.post("api/stripe/get-customer-info", { token: token });
+
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/customer`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         const [first, last] = data?.user?.name?.split(" ");
         setPlan(data.plan);
         userReset({ firstName: first, lastName: last });
@@ -127,13 +134,18 @@ const UserLayout: React.FC = () => {
   const savePersonalInfo = async (data: FieldValues) => {
     setIsLoading(true);
     try {
-      await axios.post("api/profile", {
-        userId: user?.id,
-        accessToken: tokens?.accessToken,
-        data: {
-          name: `${data.firstName} ${data.lastName}`,
-        },
-      });
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/user/${user?.id}`,
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${ tokens?.accessToken}`,
+          },
+        }
+      );
+
+    
       setIsLoading(false);
       toast("Profile is updated");
     } catch (error) {
@@ -153,10 +165,15 @@ const UserLayout: React.FC = () => {
         exp_year: "20" + data.cardExpiry?.split("/")[1].replace(/\s/g, ""),
         cvc: data.cvc,
       };
-      await axios.post("api/stripe/create-customer", {
-        token: token,
-        data: body,
-      });
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/customer`,
+        { ...data },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       await getCustomerInfo();
       setIsLoading(false);
       setCardEditable(false);

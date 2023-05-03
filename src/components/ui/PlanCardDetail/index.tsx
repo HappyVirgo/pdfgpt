@@ -52,8 +52,8 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
           {
             price_id: isAnnual ? data.stripe_product_annual_id : data.stripe_product_id,
             plan_id: data.id,
-            success_url: "http://localhost:3000/plan",
-            cancel_url: "http://localhost:3000/plan",
+            success_url: "https://test-ps3f.onrender.com/plan",
+            cancel_url: "https://test-ps3f.onrender.com/plan",
           },
           {
             headers: {

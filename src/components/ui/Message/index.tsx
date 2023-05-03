@@ -2,6 +2,8 @@ import React, { Fragment, useContext } from "react";
 import { MainContext } from "../../../layout/MainContextProvider";
 import { Popover, Transition } from "@headlessui/react";
 import { BeatLoader } from "react-spinners";
+import Markdown from 'markdown-to-jsx';
+
 
 interface ReferenceInt {
   content: string;
@@ -34,7 +36,7 @@ const Message: React.FC<MessageProps> = ({ type = "FROM_CHATGPT", message = "", 
           type === "FROM_CHATGPT" ? "bg-white dark:bg-primary" : "bg-secondary dark:bg-bgRadialStart"
         }`}
       >
-        <pre className="w-full break-words ">{message ?? ""}</pre>
+        <pre className="w-full break-words ">{<Markdown options={{forceBlock: true}} >{message}</Markdown> ?? ""}</pre>
         {type === "FROM_CHATGPT" && (
           <div className="text-end">
             <Popover className="relative">

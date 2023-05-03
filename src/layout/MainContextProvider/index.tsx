@@ -113,7 +113,11 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
       const token = typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null;
       const google_token = typeof window !== "undefined" ? localStorage.getItem("googleAuthToken") : null;
       if (token && google_token) {
-        const { data } = await axios.post("api/auto_login", { token, google_token });
+        // const { data } = await axios.post("api/auto_login", { token, google_token });
+        const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/auth/refresh-token`, {
+          token,
+          google_token,
+        });
         setUser(data?.user);
         setTokens(data?.tokens);
         setRecent(data?.recent ?? []);

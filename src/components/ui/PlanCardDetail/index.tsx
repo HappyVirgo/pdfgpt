@@ -77,7 +77,9 @@ const PlanCardDetail: React.FC<PlanCardDetailProps> = ({ data, isAnnual }) => {
       setLoading(true);
       localStorage.setItem("googleAuthToken", tokenResponse?.access_token ?? "");
       try {
-        const { data } = await axios.post("api/auth", { tokens: tokenResponse });
+        
+        const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/auth/login`, { tokens: tokenResponse });
+    
         setTokens(data?.tokens);
         setUser(data?.user);
         setDriveFiles(data?.files ?? []);

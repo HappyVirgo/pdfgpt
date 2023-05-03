@@ -24,11 +24,20 @@ export default function Plan() {
   const getPlan = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post("api/stripe/plan", {
-        token: tokens?.accessToken,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
-      setPlans(data.data.plans);
+      
+      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/subscription/plan`,
+      {timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,},
+      {
+        headers: {
+          Authorization: `Bearer ${tokens?.accessToken}`,
+        },
+      },
+    );
+      // const { data } = await axios.post("api/stripe/plan", {
+      //   token: tokens?.accessToken,
+      //   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      // });
+      setPlans(data.plans);
     } catch (error) {
       setPlans([]);
     }

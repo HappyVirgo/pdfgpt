@@ -247,6 +247,15 @@ const ChatLayout: React.FC = () => {
     }, 0);
   };
 
+  function reduceUntilBelowLimit(data: any[], acc: number = 0): any {
+    const result = data.reduce((sum, obj) => sum + obj.content_tokens, acc);
+    if (result <= 4096 || data.length === 0) {
+      return data;
+    }
+    data.pop();
+    return reduceUntilBelowLimit(data, acc);
+  }
+
   const onReply = async (value: string) => {
     if (value == "Hey There!!") {
       value = `Summarize pdf in 3 sentance and generate 3 try out questions but do not provide answers, Append "Hey there!, you have uploaded ${file?.name}"in  first line`;
@@ -266,14 +275,17 @@ const ChatLayout: React.FC = () => {
         },
         data: {
           query: value,
-          matches: 15,
+          matches: 4,
           ip: file?.uid,
           fileName: `${file?.uid}-${file?.name}`,
           user_id: uid
         },
       });
 
-      const promptData = embedRes.data?.map((d: any) => d.content).join("\n\n");
+      let arr = reduceUntilBelowLimit(embedRes.data, 0)
+
+
+      const promptData = arr?.map((d: any) => d.content).join("\n\n");
       const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
       // const prompt = stripIndent`${value}, Use the following text to provide an answer,Answer as markdown (including related code snippets, tables, bullet points if available): Text: ${promptData}`;
 

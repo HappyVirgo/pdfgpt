@@ -24,7 +24,7 @@ import Link from "next/link";
 
 const ChatLayout: React.FC = () => {
   const { tokens, user } = useContext(AuthContext);
-  const { showPdf, setShowPdf, showSetting, files, setFiles, setShowSetting, pageNum, setRecent } =
+  const { showPdf, setShowPdf, files, setFiles, pageNum, setRecent } =
     useContext(MainContext);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<any>();
@@ -107,14 +107,14 @@ const ChatLayout: React.FC = () => {
     }
   }, [botmsg]);
 
-  useEffect(() => {
-    const localSettings = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string) : "";
-    if (!localSettings) {
-      setShowSetting(true);
-    } else {
-      settings.current = localSettings;
-    }
-  }, [showSetting]);
+  // useEffect(() => {
+  //   const localSettings = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string) : "";
+  //   if (!localSettings) {
+  //     setShowSetting(true);
+  //   } else {
+  //     settings.current = localSettings;
+  //   }
+  // }, [showSetting]);
 
   async function generateEmbedding(sentenceList: any[]) {
     if (sentenceList[sentenceList.length - 1].pageNum > (user?.Plan.pages ?? 120)) {
@@ -123,11 +123,11 @@ const ChatLayout: React.FC = () => {
       return;
     }
 
-    const apiKey = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "";
-    if (!apiKey) {
-      setShowSetting(true);
-      return;
-    }
+    // const apiKey = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("settings") as string).apiKey : "";
+    // if (!apiKey) {
+    //   setShowSetting(true);
+    //   return;
+    // }
     try {
       setLoading(true);
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
@@ -140,7 +140,6 @@ const ChatLayout: React.FC = () => {
           sentence_list: sentenceList,
           ip: file?.uid,
           file_name: `${file?.uid}-${file?.name}`,
-          apiKey: apiKey,
           user_id: uid
         });
         setAlertMessage("Processing done...Now you can Do Q & A with chatbot");
@@ -211,8 +210,7 @@ const ChatLayout: React.FC = () => {
     });
 
     setShowPdf(true);
-    const apiKey = typeof window !== "undefined" && JSON.parse(localStorage.getItem("settings") as string)?.apiKey;
-    if (!file?.isEmbedded && apiKey) {
+    if (!file?.isEmbedded) {
       generateEmbedding(sentenceRef.current as string[]);
       setFiles((prev: FileType[]) => {
         const newFiles = prev;
@@ -254,7 +252,6 @@ const ChatLayout: React.FC = () => {
         },
         data: {
           query: value,
-          apiKey: settings.current?.apiKey,
           matches: 15,
           ip: file?.uid,
           fileName: `${file?.uid}-${file?.name}`,
@@ -271,7 +268,7 @@ const ChatLayout: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt, apiKey: settings.current?.apiKey }),
+        body: JSON.stringify({ prompt }),
       });
       setLoading(false);
 

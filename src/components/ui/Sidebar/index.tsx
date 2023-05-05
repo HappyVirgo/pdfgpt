@@ -40,7 +40,7 @@ const Sidebar = () => {
     toggleThemeHandler,
     showPdf,
     setShowPdf,
-    setShowSetting,
+    // setShowSetting,
     setDriveFiles,
     setFiles,
     files,
@@ -249,10 +249,10 @@ const Sidebar = () => {
                 </>
               )}
             </button>
-            <button className="flex items-center gap-3 hover:text-white" onClick={() => setShowSetting(true)}>
+            {/* <button className="flex items-center gap-3 hover:text-white" onClick={() => setShowSetting(true)}>
               <KeyIcon className="w-6" />
               Change API Key
-            </button>
+            </button> */}
             <button className="flex items-center gap-3 hover:text-white" onClick={() => push("/plan")}>
               <CurrencyDollarIcon className="w-6" />
               Pricing
@@ -483,10 +483,10 @@ const Sidebar = () => {
                 </>
               )}
             </button>
-            <button className="flex items-center gap-3 hover:text-white" onClick={() => setShowSetting(true)}>
+            {/* <button className="flex items-center gap-3 hover:text-white" onClick={() => setShowSetting(true)}>
               <KeyIcon className="w-6" />
               Change API Key
-            </button>
+            </button> */}
             <button className="flex items-center gap-3 hover:text-white" onClick={() => push("/plan")}>
               <CurrencyDollarIcon className="w-6" />
               Pricing

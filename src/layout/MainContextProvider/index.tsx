@@ -47,8 +47,8 @@ type MainContextType = {
   setShowPdf: React.Dispatch<SetStateAction<boolean>>;
   files: FileType[];
   setFiles: React.Dispatch<SetStateAction<FileType[]>>;
-  showSetting: boolean;
-  setShowSetting: React.Dispatch<SetStateAction<boolean>>;
+  // showSetting: boolean;
+  // setShowSetting: React.Dispatch<SetStateAction<boolean>>;
   recent: DocumentType[];
   setRecent: React.Dispatch<SetStateAction<DocumentType[]>>;
   pageNum: number;
@@ -64,8 +64,8 @@ const MainContextValue: MainContextType = {
   setShowPdf: () => {},
   files: [],
   setFiles: () => {},
-  showSetting: false,
-  setShowSetting: () => {},
+  // showSetting: false,
+  // setShowSetting: () => {},
   recent: [],
   setRecent: () => {},
   pageNum: 1,
@@ -85,7 +85,7 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [showPdf, setShowPdf] = useState<boolean>(false);
   const [files, setFiles] = useState<FileType[]>([]);
-  const [showSetting, setShowSetting] = useState(false);
+  // const [showSetting, setShowSetting] = useState(false);
   const [recent, setRecent] = useState<DocumentType[]>([]);
   const [pageNum, setPageNum] = useState<number>(1);
   const [driveFiles, setDriveFiles] = useState<DriveFileType[]>([]);
@@ -179,14 +179,14 @@ const MainContextProvider: React.FC<ThemePropsInterface> = ({ children }) => {
         isDarkTheme,
         showPdf,
         files,
-        showSetting,
+        // showSetting,
         recent,
         pageNum,
         driveFiles,
         setShowPdf,
         toggleThemeHandler,
         setFiles,
-        setShowSetting,
+        // setShowSetting,
         setRecent,
         setPageNum,
         setDriveFiles,

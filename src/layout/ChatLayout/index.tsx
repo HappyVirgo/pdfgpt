@@ -268,7 +268,7 @@ const ChatLayout: React.FC = () => {
         localStorage.setItem("uid", uid);
       }
 
-      const embedRes = await axios(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-embed`, {
+      const embedRes = await axios(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/search-embed`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -289,7 +289,7 @@ const ChatLayout: React.FC = () => {
       const prompt = `${value}, Use the following text to provide an answer, Text: ${promptData}`;
       // const prompt = stripIndent`${value}, Use the following text to provide an answer,Answer as markdown (including related code snippets, tables, bullet points if available): Text: ${promptData}`;
 
-      const answerResponse = await fetch(`${process.env.NEXT_PUBLIC_CHAT_API_ENDPOINT}/search-answer`, {
+      const answerResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history/search-answer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

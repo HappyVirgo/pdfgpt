@@ -31,7 +31,7 @@ export type FileType = {
   order: number;
   name?: string;
   uid?: string;
-  file?: File;
+  file?: File | string;
   ip?: string;
   s3_url?: string;
   active: boolean;

@@ -183,22 +183,36 @@ const ChatLayout: React.FC = () => {
   }
 
   async function onDocumentLoadSuccess(doc: any) {
+    // const { numPages } = doc;
+    // const sentenceEndSymbol = /[。.]\s+/;
+    // const allSentenceList = [];
+
+    // for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+    //   const currentPage = await doc.getPage(pageNum);
+    //   const currentPageContent = await currentPage.getTextContent();
+    //   const currentPageText = currentPageContent.items
+    //     .map((item: any) => (item as TextItem).str)
+    //     .join(' ');
+
+    //   const sentenceList = currentPageText.split(sentenceEndSymbol);
+    //   allSentenceList.push(...sentenceList.map((item: string) => ({ sentence: item, pageNum })));
+    // }
+
+    // sentenceRef.current = allSentenceList.filter(item => item.sentence);
+
     const { numPages } = doc;
-    const sentenceEndSymbol = /[。.]\s+/;
     const allSentenceList = [];
 
     for (let pageNum = 1; pageNum <= numPages; pageNum++) {
       const currentPage = await doc.getPage(pageNum);
       const currentPageContent = await currentPage.getTextContent();
-      const currentPageText = currentPageContent.items
-        .map((item: any) => (item as TextItem).str)
-        .join(' ');
-
-      const sentenceList = currentPageText.split(sentenceEndSymbol);
-      allSentenceList.push(...sentenceList.map((item: string) => ({ sentence: item, pageNum })));
+      const currentPageText = currentPageContent.items.map((item: any) => (item as TextItem).str).join(" ");
+      allSentenceList.push({ sentence: currentPageText, pageNum });
     }
-
-    sentenceRef.current = allSentenceList.filter(item => item.sentence);
+    // @ts-ignore
+    sentenceRef.current = allSentenceList.filter((item) => {
+      return item.sentence;
+    });
 
     setFiles((prev: FileType[]) => {
       const newFiles = prev;

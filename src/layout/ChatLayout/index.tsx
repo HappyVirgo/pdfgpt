@@ -331,9 +331,9 @@ const ChatLayout: React.FC = () => {
   const onSend = async (value: string) => {
     if (!value) return;
     setQuestion("");
-    if (!settings.current?.apiKey) {
-      return;
-    }
+    // if (!settings.current?.apiKey) {
+    //   return;
+    // }
     !botmsg && setMessages((prev) => [...prev, { type: "QUESTION", message: value.trim() }, { type: "REPLY", message: "" }]);
     setFiles((prev: FileType[]) => {
       const index = prev.findIndex((item) => item.active);

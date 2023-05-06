@@ -15,7 +15,7 @@ import Reply from "../../assets/svg/reply.svg";
 import { AuthContext } from "../AuthContextProvider";
 import { FileType, MainContext } from "../MainContextProvider";
 import { MessageItem } from "../MainContextProvider";
-import {oneLine, stripIndent} from 'common-tags'
+import { oneLine, stripIndent } from 'common-tags'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
 
@@ -51,7 +51,7 @@ const ChatLayout: React.FC = () => {
   function highlightPattern(text: any, pattern: any) {
     return text.replace(pattern, (value: any) => `<mark>${value}</mark>`);
   }
-  
+
   const textRenderer = useCallback(
     (textItem: any) => highlightPattern(textItem.str, searchText),
     [searchText]
@@ -129,7 +129,6 @@ const ChatLayout: React.FC = () => {
     //   return;
     // }
     try {
-      setLoading(true);
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {
         uid = uuid.v4();
@@ -183,56 +182,43 @@ const ChatLayout: React.FC = () => {
   }
 
   async function onDocumentLoadSuccess(doc: any) {
-    // const { numPages } = doc;
-    // const sentenceEndSymbol = /[。.]\s+/;
-    // const allSentenceList = [];
-
-    // for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-    //   const currentPage = await doc.getPage(pageNum);
-    //   const currentPageContent = await currentPage.getTextContent();
-    //   const currentPageText = currentPageContent.items
-    //     .map((item: any) => (item as TextItem).str)
-    //     .join(' ');
-
-    //   const sentenceList = currentPageText.split(sentenceEndSymbol);
-    //   allSentenceList.push(...sentenceList.map((item: string) => ({ sentence: item, pageNum })));
-    // }
-
-    // sentenceRef.current = allSentenceList.filter(item => item.sentence);
+    console.log("Document load succefully")
+    setLoading(true);
 
     const { numPages } = doc;
-    const allSentenceList = [];
+    // const allSentenceList = [];
 
+    const pagePromises = [];
     for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-      const currentPage = await doc.getPage(pageNum);
-      const currentPageContent = await currentPage.getTextContent();
-      const currentPageText = currentPageContent.items.map((item: any) => (item as TextItem).str).join(" ");
-      allSentenceList.push({ sentence: currentPageText, pageNum });
+      pagePromises.push(doc.getPage(pageNum).then((page:any) => page.getTextContent()));
     }
+    const allPageContents = await Promise.all(pagePromises);
+    const allSentenceList = allPageContents.map((currentPageContent, pageNum) => {
+      const currentPageText = currentPageContent.items.map((item: any) => (item as TextItem).str).join(" ");
+      return { sentence: currentPageText, pageNum: pageNum + 1 };
+    });
     // @ts-ignore
     sentenceRef.current = allSentenceList.filter((item) => {
       return item.sentence;
     });
 
-    setFiles((prev: FileType[]) => {
-      const newFiles = prev;
+    setFiles(prev => {
       const index = prev.findIndex((item) => item.active);
       if (index > -1) {
-        newFiles[index].total_pages = numPages;
+        prev[index].total_pages = numPages;
       }
-      return newFiles;
+      return prev;
     });
-
     setShowPdf(true);
     if (!file?.isEmbedded) {
+      console.log("calling embedding api")
       generateEmbedding(sentenceRef.current as string[]);
-      setFiles((prev: FileType[]) => {
-        const newFiles = prev;
+      setFiles(prev => {
         const index = prev.findIndex((item) => item.active);
         if (index > -1) {
-          newFiles[index].isEmbedded = true;
+          prev[index].isEmbedded = true;
         }
-        return newFiles;
+        return prev;
       });
     }
   }
@@ -366,7 +352,7 @@ const ChatLayout: React.FC = () => {
       const newFiles = prev;
       if (index > -1) {
         localStorage.setItem("onSendChatUid", `${files.find((f) => f.active)?.uid}`);
-        if(!botmsg) newFiles[index].messages = [
+        if (!botmsg) newFiles[index].messages = [
           ...prev[index].messages,
           { type: "QUESTION", message: value.trim() },
           { type: "REPLY", message: "" },
@@ -384,9 +370,8 @@ const ChatLayout: React.FC = () => {
       <FileTab loading={loading} setShowSaveErrorModal={setShowSaveErrorModal} setErrorMessage={setErrorMessage} />
       {file && (
         <div
-          className={`relative ${
-            showPdf && file ? "w-full md:w-1/2 h-full" : "w-full"
-          } h-full dark:bg-bgRadialEnd  bg-lightText dark:bg-gradient-radial duration-300 transition-all`}
+          className={`relative ${showPdf && file ? "w-full md:w-1/2 h-full" : "w-full"
+            } h-full dark:bg-bgRadialEnd  bg-lightText dark:bg-gradient-radial duration-300 transition-all`}
         >
           <div
             className="flex w-full h-full px-4 pt-20 pb-20 overflow-x-hidden overflow-y-auto md:pt-10 xl:pt-20"
@@ -452,9 +437,8 @@ const ChatLayout: React.FC = () => {
       )}
       {(file?.file || file?.s3_url) && showPdf && (
         <div
-          className={`w-full px-8 pt-12 pb-16 h-full md:w-1/2 bg-primary fixed md:relative top-0 ${
-            showPdf && file ? "fixed md:relative" : "hidden"
-          }`}
+          className={`w-full px-8 pt-12 pb-16 h-full md:w-1/2 bg-primary fixed md:relative top-0 ${showPdf && file ? "fixed md:relative" : "hidden"
+            }`}
         >
           <button onClick={() => setShowPdf(false)} className="float-right">
             <XCircleIcon className="w-8" />

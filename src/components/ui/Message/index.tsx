@@ -64,7 +64,7 @@ const Message: React.FC<MessageProps> = ({ type = "FROM_CHATGPT", message = "", 
                               e.stopPropagation();
                               setShowPdf(true);
                               setPageNum(item.page_num);
-                              highlight(`${item.content?.split(" ")[0]} ${item.content?.split(" ")[1]} ${item.content?.split(" ")[2]}`)
+                              // highlight(`${item.content?.split(" ")[0]} ${item.content?.split(" ")[1]} ${item.content?.split(" ")[2]}`)
                             }}
                           >{`Page #${item.page_num}`}</a>
                           <p className="mt-1 text-left">{item.content}</p>

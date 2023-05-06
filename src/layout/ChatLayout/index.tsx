@@ -261,7 +261,7 @@ const ChatLayout: React.FC = () => {
       value = `Summarize pdf in 3 sentance and generate 3 try out questions but do not provide answers, Append "Hey there!, you have uploaded ${file?.name}"in  first line`;
     }
     try {
-      setLoading(true);
+      !loading && setLoading(true);
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {
         uid = uuid.v4();

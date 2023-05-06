@@ -163,18 +163,28 @@ const ChatLayout: React.FC = () => {
           formData.append("uid", `${file?.uid}`);
           formData.append("total_pages", `${file?.total_pages}`);
           formData.append("messages", JSON.stringify(file?.messages));
-          await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
+          axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, formData, {
             headers: {
               Authorization: `Bearer ${tokens?.accessToken}`,
             },
-          });
-          const history = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
+          })
+            .then(() => {
+              axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_BASEURL}/history`, {
             headers: {
               Authorization: `Bearer ${tokens?.accessToken}`,
             },
+              })
+                .then((response) => {
+                  setRecent(response?.data?.documents ?? []);
+                  toast("File upload is succeeded");
+                })
+                .catch(() => {
+                  toast("File upload is failed");
           });
-          setRecent(history?.data?.documents ?? []);
-          toast("File upload is succed");
+            })
+            .catch(() => {
+              toast("File upload is failed");
+            });
         } catch (error) {
           toast("File upload is faild");
         }
@@ -187,7 +197,7 @@ const ChatLayout: React.FC = () => {
 
   async function onDocumentLoadSuccess(doc: any) {
     console.log("Document load succefully")
-    setLoading(true);
+    !file?.isEmbedded && setLoading(true);
 
     const { numPages } = doc;
     // const allSentenceList = [];

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from "react";
-
+//@ts-ignore
 import * as uuid from "uuid";
 
 import { toast } from "react-toastify";
@@ -62,8 +62,10 @@ const MyDropzone = () => {
     let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
     if (!uid) {
       uid = uuid.v4();
+//@ts-ignore
       localStorage.setItem("uid", uid);
     }
+//@ts-ignore
         let { presignedUrl, key} = await getS3SignUrl(file.name, uid, file.id)
         console.log("🚀 ~ file: index.tsx:65 ~ onDrop ~ presignedUrl:", presignedUrl)
         let uploadedURL = await handleUpload(file, presignedUrl, key)

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 import React, { createContext, SetStateAction, useEffect, useState, useContext } from "react";
+//@ts-ignore
 import * as uuid from "uuid";
 import { AuthContext } from "../AuthContextProvider";
 

@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+//@ts-ignore
 import * as uuid from "uuid";
 import axios from "axios";
+//@ts-ignore
 import { Document, Page, pdfjs } from "react-pdf";
 import { ScaleLoader } from "react-spinners";
 import { XCircleIcon } from "@heroicons/react/24/outline";
@@ -15,6 +17,7 @@ import Reply from "../../assets/svg/reply.svg";
 import { AuthContext } from "../AuthContextProvider";
 import { FileType, MainContext } from "../MainContextProvider";
 import { MessageItem } from "../MainContextProvider";
+//@ts-ignore
 import { oneLine, stripIndent } from 'common-tags'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.js`;
@@ -132,6 +135,7 @@ const ChatLayout: React.FC = () => {
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {
         uid = uuid.v4();
+        //@ts-ignore
         localStorage.setItem("uid", uid);
       }
       try {
@@ -251,6 +255,7 @@ const ChatLayout: React.FC = () => {
       let uid = typeof window !== "undefined" ? localStorage.getItem("uid") : null;
       if (!uid) {
         uid = uuid.v4();
+        //@ts-ignore
         localStorage.setItem("uid", uid);
       }
 
@@ -449,7 +454,7 @@ const ChatLayout: React.FC = () => {
               ref={pdfRef}
               file={file?.s3_url ? file?.s3_url : file?.file}
               onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={(error) => { window.location.reload() }}
+              onLoadError={(error:any) => { window.location.reload() }}
 
             >
               {Array.from(new Array(file.total_pages), (_el, index) => (

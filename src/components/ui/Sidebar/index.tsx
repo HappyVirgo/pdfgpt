@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useState } from "react";
 import axios from "axios";
+//@ts-ignore
 import * as uuid from "uuid";
 import Image from "next/image";
 import Link from "next/link";

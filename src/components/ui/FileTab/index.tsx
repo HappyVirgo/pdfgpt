@@ -1,4 +1,6 @@
 import React, { useContext, useState } from "react";
+
+//@ts-ignore
 import * as uuid from "uuid";
 import { FileType, MainContext } from "../../../layout/MainContextProvider";
 import { CircleStackIcon, DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";

@@ -37,6 +37,7 @@ const ChatLayout: React.FC = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [botmsg, setbotmsg] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [skip, setSkip] = useState(0)
   const [question, setQuestion] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [showSaveErroModal, setShowSaveErrorModal] = useState(false);
@@ -459,6 +460,10 @@ const ChatLayout: React.FC = () => {
             <XCircleIcon className="w-8" />
           </button>
           <p className="text-center text-lightText">{file?.name}</p>
+          <div className="w-full flex justify-between">
+            {<button disabled={skip + 25 > file.total_pages} onClick={() => setSkip(skip + 25)}>Next</button>}
+            {<button disabled={skip - 25 < 0} onClick={() => setSkip(skip - 25)}>Prev</button>}
+          </div>
           <div className="w-full h-full mt-4 overflow-auto bg-white">
             <Document
               ref={pdfRef}
@@ -467,16 +472,18 @@ const ChatLayout: React.FC = () => {
               onLoadError={(error:any) => { window.location.reload() }}
 
             >
-              {Array.from(new Array(file.total_pages), (_el, index) => (
-                <Page key={`page_${index + 1}`} pageNumber={index + 1} width={720} renderAnnotationLayer={false} customTextRenderer={textRenderer}
+              {Array.from(new Array(25), (_el, index) => (
+                <Page key={`page_${index + 1}`} pageNumber={index + 1 + skip} width={720} renderAnnotationLayer={false} customTextRenderer={textRenderer}
                 />
               ))}
             </Document>
+            {console.log(file.total_pages, skip)}
             {/* <div>
         <label htmlFor="search">Search:</label>
         <input type="search" id="search" value={searchText} onChange={onChange} />
       </div> */}
           </div>
+          
         </div>
       )}
       <Modal isOpen={showAlert} setIsOpen={setShowAlert}>
